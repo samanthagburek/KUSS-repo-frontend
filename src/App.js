@@ -16,13 +16,21 @@ function PersonPage() {
   return <h1>{name}</h1>
 }
 
+const homeHeader = "Journal";
+
+function Home(){
+  const styles = {
+    'textAlign': 'center',
+  }
+  return <h1 style={styles}>{homeHeader}</h1>
+}
+
 function App() {
   return (
     <BrowserRouter>
       <Navbar />
       <Routes>
-        {/* For a different home page, do:
-         <Route index element={<Login />} /> */}
+        <Route index element={<h1>{Home()}</h1>}/>
         <Route path="people" element={<People />} />
         <Route path="people/:name" element={<PersonPage />} />
       </Routes>
