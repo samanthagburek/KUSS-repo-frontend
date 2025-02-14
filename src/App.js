@@ -30,7 +30,7 @@ function App() {
     <BrowserRouter>
       <Navbar />
       <Routes>
-        <Route index element={<h1>{Home()}</h1>}/>
+        <Route index element={<Home/>}/>
         <Route path="people" element={<People />} />
         <Route path="people/:name" element={<PersonPage />} />
       </Routes>
