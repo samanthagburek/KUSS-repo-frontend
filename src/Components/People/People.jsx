@@ -5,6 +5,8 @@ import { Link } from 'react-router-dom';
  
 import { BACKEND_URL } from '../../constants';
 
+import './People.css';
+
 const PEOPLE_READ_ENDPOINT = `${BACKEND_URL}/people`;
 const PEOPLE_CREATE_ENDPOINT = `${BACKEND_URL}/people/create`;
 
@@ -25,6 +27,8 @@ function AddPersonForm({
     const newPerson = {
       name: name,
       email: email,
+      roles: 'ED',
+      affiliation: '',
     }
     axios.put(PEOPLE_CREATE_ENDPOINT, newPerson)
       .then(fetchPeople)
@@ -65,17 +69,26 @@ ErrorMessage.propTypes = {
   message: propTypes.string.isRequired,
 };
 
-function Person({ person }) {
+function Person({ person, fetchPeople }) {
   const { name, email } = person;
+
+  const deletePerson = () => {
+    axios.delete(`${PEOPLE_READ_ENDPOINT}/${email}`)
+      .then(fetchPeople)
+  }
+
   return (
-    <Link to={name}>
-      <div className="person-container">
-        <h2>{name}</h2>
-        <p>
-          Email: {email}
-        </p>
-      </div>
-    </Link>
+    <div>
+      <Link to={name}>
+        <div className="person-container">
+          <h2>{name}</h2>
+          <p>
+            Email: {email}
+          </p>
+        </div>
+      </Link>
+      <button onClick={deletePerson}>Delete person</button>
+    </div>
   );
 }
 Person.propTypes = {
@@ -83,6 +96,7 @@ Person.propTypes = {
     name: propTypes.string.isRequired,
     email: propTypes.string.isRequired,
   }).isRequired,
+  fetchPeople: propTypes.func,
 };
 
 function peopleObjectToArray(Data) {
@@ -126,7 +140,7 @@ function People() {
         setError={setError}
       />
       {error && <ErrorMessage message={error} />}
-      {people.map((person) => <Person key={person.name} person={person} />)}
+      {people.map((person) => <Person key={person.email} person={person} fetchPeople={fetchPeople} />)}
     </div>
   );
 }
