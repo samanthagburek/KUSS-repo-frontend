@@ -8,7 +8,7 @@ import { BACKEND_URL } from '../../constants';
 import './People.css';
 
 const PEOPLE_READ_ENDPOINT = `${BACKEND_URL}/people`;
-const PEOPLE_CREATE_ENDPOINT = `${BACKEND_URL}/people/create`;
+const PEOPLE_CREATE_ENDPOINT = `${BACKEND_URL}/people`;
 
 function AddPersonForm({
   visible,
@@ -18,9 +18,11 @@ function AddPersonForm({
 }) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [affiliation, setAffiliation] = useState('');
 
   const changeName = (event) => { setName(event.target.value); };
   const changeEmail = (event) => { setEmail(event.target.value); };
+  const changeAffiliation = (event) => {setAffiliation(event.target.value); };
 
   const addPerson = (event) => {
     event.preventDefault();
@@ -28,7 +30,7 @@ function AddPersonForm({
       name: name,
       email: email,
       roles: 'ED',
-      affiliation: '',
+      affiliation: affiliation,
     }
     axios.put(PEOPLE_CREATE_ENDPOINT, newPerson)
       .then(fetchPeople)
@@ -46,6 +48,10 @@ function AddPersonForm({
         Email
       </label>
       <input required type="text" id="email" onChange={changeEmail} />
+      <label htmlFor="affiliation">
+        Affiliation
+      </label>
+      <input required type="text" id="affiliation" onChange={changeAffiliation} />
       <button type="button" onClick={cancel}>Cancel</button>
       <button type="submit" onClick={addPerson}>Submit</button>
     </form>
@@ -97,6 +103,7 @@ Person.propTypes = {
     email: propTypes.string.isRequired,
   }).isRequired,
   fetchPeople: propTypes.func,
+
 };
 
 function peopleObjectToArray(Data) {
