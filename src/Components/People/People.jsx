@@ -79,9 +79,21 @@ function Person({ person, fetchPeople }) {
   const { name, email } = person;
 
   //delete not working yet!
+  const [delMsg, setdelMsg] = useState('');
   const deletePerson = () => {
-    axios.delete(`${PEOPLE_READ_ENDPOINT}/${email}`)
-      .then(fetchPeople)
+    const confirmDelete = window.confirm(`Are you sure you want to delete ${name}?`);
+    if (!confirmDelete) return; 
+    const delperson = { data: {email}}
+   
+    axios.delete(PEOPLE_READ_ENDPOINT,delperson)
+      .then(() => {
+        setdelMsg(`${name} deleted`);
+        setTimeout(() => {
+        setdelMsg('');
+        fetchPeople();
+      }, 2500);
+      })
+      .catch(error => console.error("Error deleting person:", error));
   }
 
   return (
@@ -95,6 +107,11 @@ function Person({ person, fetchPeople }) {
         </div>
       </Link>
       <button onClick={deletePerson}>Delete person</button>
+      {delMsg && (
+        <div className="delete-popup">
+          {delMsg}
+        </div>
+      )}
     </div>
   );
 }
