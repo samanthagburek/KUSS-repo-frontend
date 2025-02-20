@@ -78,6 +78,7 @@ ErrorMessage.propTypes = {
 function Person({ person, fetchPeople }) {
   const { name, email } = person;
 
+  //delete not working yet!
   const deletePerson = () => {
     axios.delete(`${PEOPLE_READ_ENDPOINT}/${email}`)
       .then(fetchPeople)
