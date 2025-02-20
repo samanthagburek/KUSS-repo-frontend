@@ -1,3 +1,20 @@
 .person-container {
     border: 5px solid black;
   }
+
+  .delete-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: black;
+  color: #A3C19A;
+  padding: 10px 15px;
+  border-radius: 5px;
+  font-size: 20px;
+  font-weight: bold;
+  z-index: 1000;
+  opacity: 1;
+  display: block;
+}
+
