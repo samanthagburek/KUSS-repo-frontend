@@ -80,9 +80,23 @@ function TextItem({ thetext, fetchText }) {
     const { key, title, text } = thetext;
 
     //delete not working yet!
-    const deleteText = () => {
-    axios.delete(`${TEXT_READ_ENDPOINT}/${key}`)
+    //delete not working yet!
+    const [delMsg, setdelMsg] = useState('');
+    const deleteText= () => {
+    const confirmDelete = window.confirm(`Are you sure you want to delete ${name}?`);
+    if (!confirmDelete) return; 
+    const deltext = { data: {key}}
+   
+    axios.delete(TEXT_READ_ENDPOINT,deltext)
+      .then(() => {
+        setdelMsg(`${title} deleted`);
+        setTimeout(() => {
+        setdelMsg('');
+        fetchText();
+      }, 2500);
+      })
       .then(fetchText)
+      .catch(error => console.error("Error deleting text:", error));
     }
 
     return (
@@ -96,6 +110,11 @@ function TextItem({ thetext, fetchText }) {
                 </div>
             </Link>
             <button onClick={deleteText}>Delete text</button>
+            {delMsg && (
+                <div className="delete-popup">
+                {delMsg}
+                </div>
+            )}
         </div>
     );
 }
