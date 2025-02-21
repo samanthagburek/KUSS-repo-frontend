@@ -37,6 +37,7 @@ function AddPersonForm({
       .catch((error) => { setError(`There was a problem adding the person. ${error}`); });
   };
 
+
   if (!visible) return null;
   return (
     <form>
@@ -93,6 +94,7 @@ function Person({ person, fetchPeople }) {
         fetchPeople();
       }, 2500);
       })
+      .then(fetchPeople)
       .catch(error => console.error("Error deleting person:", error));
   }
 
