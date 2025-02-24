@@ -88,6 +88,10 @@ function UpdatePersonForm({
   const [affiliation, setAffiliation] = useState(person.affiliation);
   const [updateMsg, setUpdateMsg] = useState('');
 
+  useEffect(() => {
+    setName(person.name);
+    setAffiliation(person.affiliation);
+  }, [person]);
 
   const changeName = (event) => { setName(event.target.value); };
   const changeAffiliation = (event) => {setAffiliation(event.target.value); };
@@ -96,13 +100,12 @@ function UpdatePersonForm({
     event.preventDefault();
     const updatedPerson = {
       email: person.email, name, affiliation };
-    console.log(updatedPerson);
+    
     axios.patch(PEOPLE_UPDATE_ENDPOINT, updatedPerson)
     .then(() => {
         setUpdateMsg(`Information updated for ${name}`);
-        setTimeout(() => setUpdateMsg(''), 3000);
+        setTimeout(() => {setUpdateMsg(''); cancel();}, 3000);
         fetchPeople();
-        cancel();
       })
       .catch((error) => { setError(`There was a problem updating the person. ${error}`); });
        
