@@ -48,3 +48,6 @@ Use axios to send a GET request. Render the response in the browser.
 # Creating the Add Person button
 
 Use axios to send a POST request.
+
+
+To see the changes for progress and goals click [here](https://github.com/samanthagburek/KUSS-repo-frontend/blob/master/ProgressAndGoals.md)
