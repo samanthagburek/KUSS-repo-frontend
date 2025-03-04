@@ -13,9 +13,17 @@ describe('App', () => {
     await screen.findAllByRole('listitem');
 
     expect(screen.getByRole('heading'))
-      .toHaveTextContent('Journal');
+      .toHaveTextContent(homeHeader);
     
     expect(screen.getAllByRole('listitem')).toHaveLength(3);
+  });
+it('switches to People view', async () => {
+    render(<App />);
+
+    userEvent.click(screen.getByText('View All People'));
+
+    expect(screen.getByRole('heading'))
+      .toHaveTextContent('View All People')
   });
 
 })

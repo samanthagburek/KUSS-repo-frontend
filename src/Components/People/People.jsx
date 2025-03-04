@@ -9,7 +9,8 @@ import './People.css';
 
 const PEOPLE_READ_ENDPOINT = `${BACKEND_URL}/people`;
 const PEOPLE_CREATE_ENDPOINT = `${BACKEND_URL}/people`;
-const PEOPLE_UPDATE_ENDPOINT = `${BACKEND_URL}/people`
+const PEOPLE_UPDATE_ENDPOINT = `${BACKEND_URL}/people`;
+const ROLES_ENDPOINT = `${BACKEND_URL}/roles`
 
 function AddPersonForm({
   visible,
@@ -37,7 +38,12 @@ function AddPersonForm({
       .then(fetchPeople)
       .catch((error) => { setError(`There was a problem adding the person. ${error}`); });
   };
-
+  const getRoles = () => {
+    axios.get(ROLES_ENDPOINT)
+      .then(({ data }) => console.log(data))
+      .catch((error) => { setError(`There was a problem getting roles. ${error}`); });
+  }
+  getRoles();
 
   if (!visible) return null;
   return (
