@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import { BACKEND_URL } from '../../constants';
 
 import './People.css';
+// import { use } from 'react';
 
 const PEOPLE_READ_ENDPOINT = `${BACKEND_URL}/people`;
 const PEOPLE_CREATE_ENDPOINT = `${BACKEND_URL}/people`;
@@ -21,17 +22,20 @@ function AddPersonForm({
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [affiliation, setAffiliation] = useState('');
+  const [role, setRole] = useState('');
+  const [roleOptions, setRoleOptions] = useState('');
 
   const changeName = (event) => { setName(event.target.value); };
   const changeEmail = (event) => { setEmail(event.target.value); };
   const changeAffiliation = (event) => {setAffiliation(event.target.value); };
+  const changeRole = (event) => {setRole(event.target.value); };
 
   const addPerson = (event) => {
     event.preventDefault();
     const newPerson = {
       name: name,
       email: email,
-      roles: 'ED',
+      roles: role,
       affiliation: affiliation,
     }
     axios.put(PEOPLE_CREATE_ENDPOINT, newPerson)
@@ -40,10 +44,10 @@ function AddPersonForm({
   };
   const getRoles = () => {
     axios.get(ROLES_ENDPOINT)
-      .then(({ data }) => console.log(data))
+      .then(({ data }) => {setRoleOptions(data)})
       .catch((error) => { setError(`There was a problem getting roles. ${error}`); });
   }
-  getRoles();
+  useEffect(getRoles, []);
 
   if (!visible) return null;
   return (
@@ -60,6 +64,16 @@ function AddPersonForm({
         Affiliation
       </label>
       <input required type="text" id="affiliation" onChange={changeAffiliation} />
+      <select name='role' onChange={changeRole}>
+        {
+          Object.keys(roleOptions).map((code)=>(
+            <option key={code} value={code}>
+              {roleOptions[code]}
+            </option>
+          ))
+        }
+      </select>
+
       <button type="button" onClick={cancel}>Cancel</button>
       <button type="button" onClick={addPerson}>Submit</button>
     </form>
