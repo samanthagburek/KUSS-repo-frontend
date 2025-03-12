@@ -13,20 +13,21 @@ import People from './Components/People';
 import Text from './Components/Text';
 import Masthead from './Components/Masthead';
 import Submission from './Components/Submission';
+import Home from './Components/Home';
 
 function PersonPage() {
   const { name } = useParams();
   return <h1>{name}</h1>
 }
 
-const homeHeader = "Journal";
+// const homeHeader = "The KUSS Journal";
 
-function Home(){
-  const styles = {
-    'textAlign': 'center',
-  }
-  return <h1 style={styles}>{homeHeader}</h1>
-}
+// function Home(){
+//   const styles = {
+//     'textAlign': 'center',
+//   }
+//   return <h1 style={styles}>{homeHeader}</h1>
+// }
 
 function App() {
   return (
