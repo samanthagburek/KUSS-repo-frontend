@@ -12,6 +12,7 @@ function AddManuscript({ cancel, fetchManus, setError }) {
   const [text, setText] = useState('');
   const [abstract, setAbstract] = useState('');
   const [editor_email, setEditorEmail] = useState('');
+  const [successMessage, setSuccessMessage] = useState(false);
 
 
   const changeTitle = (event) => setTitle(event.target.value);
@@ -19,7 +20,8 @@ function AddManuscript({ cancel, fetchManus, setError }) {
   const changeAuthorEmail = (event) => setAuthorEmail(event.target.value);
   const changeText = (event) => setText(event.target.value);
   const changeAbstract = (event) => setAbstract(event.target.value);
-  
+  const changeEditorEmail = (event) => setEditorEmail(event.target.value);
+
   const addManus = (event) => {
     event.preventDefault();
     const newManuscript = { 
@@ -40,11 +42,15 @@ function AddManuscript({ cancel, fetchManus, setError }) {
         setText('');
         setAbstract('');
         setEditorEmail('');
+        setSuccessMessage(true); 
+        setTimeout(() => setSuccessMessage(false), 3000);
       })
       .catch((error) => setError(`Error submitting manuscript: ${error.message}`));
   };
 
 return (
+    <div>
+    {successMessage && <div className="popup-message">Manuscript Added!</div>}
     <form className="submission-container">
       <label>Title</label>
       <input type="text" value={title} onChange={changeTitle} required />
@@ -61,9 +67,13 @@ return (
       <label>Abstract</label>
       <textarea value={abstract} onChange={changeAbstract} required />
 
+      <label>Editor Email</label>
+      <textarea value={abstract} onChange={changeEditorEmail} required />
+
       <button type="button" onClick={cancel}>Cancel</button>
       <button type="submit" onClick={addManus}>Submit</button>
     </form>
+   </div>
   );
 }
 
