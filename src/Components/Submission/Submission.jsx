@@ -3,7 +3,6 @@ import propTypes from 'prop-types';
 import axios from 'axios';
 import { BACKEND_URL } from '../../constants';
 import './Submission.css';
-// import PropTypes from 'prop-types';
 const MANUSCRIPTS_ENDPOINT = `${BACKEND_URL}/manuscripts`;
 
 
@@ -14,7 +13,7 @@ function AddManuscript({ visible, cancel, fetchManus, setError }) {
   const [text, setText] = useState('');
   const [abstract, setAbstract] = useState('');
   const [editor_email, setEditorEmail] = useState('');
-  const [successMessage, setSuccessMessage] = useState(false);
+  const [addMsg, setAddMsg] = useState(false);
   const [errors, setErrors] = useState([]);
 
 
@@ -62,9 +61,9 @@ function AddManuscript({ visible, cancel, fetchManus, setError }) {
 
     axios.put(MANUSCRIPTS_ENDPOINT, newManuscript)
       .then(() => {
-        setSuccessMessage(true);
+        setAddMsg(true);
         setTimeout(() => {
-        setSuccessMessage('');
+        setAddMsg('');
         cancel();
         fetchManus();
       },3000); })
@@ -73,7 +72,7 @@ function AddManuscript({ visible, cancel, fetchManus, setError }) {
 if (!visible) return null;
 return (
     <div>
-    {successMessage && <div className="popup-message">Manuscript Added!</div>}
+    {addMsg && <div className="popup-message">Manuscript Added!</div>}
     
     <form className="submission-container">
       <label>Title</label>
@@ -86,14 +85,10 @@ return (
       <input type="email" value={author_email} onChange={changeAuthorEmail} required />
 
       <label>Text</label>
-      <textarea value={text} onChange={changeText} required 
-          rows="5" 
-          style={{ width: '50%', padding: '10px', fontSize: '16px' }} />
+      <textarea value={text} onChange={changeText} required  />
 
       <label>Abstract</label>
-      <textarea value={abstract} onChange={changeAbstract} required
-      rows="5" 
-          style={{ width: '50%', padding: '10px', fontSize: '16px' }} />
+      <textarea value={abstract} onChange={changeAbstract} required />
 
       <label>Editor Email</label>
       <input type="email" value={editor_email} onChange={changeEditorEmail} required />
@@ -188,7 +183,7 @@ if (!visible) return null;
  return (
       <div>
       {updateMessage && <div className="update-popup">{updateMessage}</div>}
-      <form>
+      <form className="submission-container">
         <label htmlFor="title">Title</label>
         <input type="text" id="title" value={title} onChange={changeTitle} />
 
@@ -199,10 +194,14 @@ if (!visible) return null;
         <input type="email" id="author_email" value={author_email} onChange={changeAuthorEmail} />
 
         <label htmlFor="text">Text</label>
-        <textarea id="text" value={text} onChange={changeText} />
+        <textarea id="text" value={text} onChange={changeText} 
+          rows="5" 
+          style={{ width: '50%', padding: '20', fontSize: '16px' }}/>
 
         <label htmlFor="abstract">Abstract</label>
-        <textarea id="abstract" value={abstract} onChange={changeAbstract} />
+        <textarea id="abstract" value={abstract} onChange={changeAbstract}
+          rows="5" 
+          style={{ width: '50%', padding: '10px', fontSize: '16px' }} />
 
         <label htmlFor="editor_email">Editor Email</label>
         <input type="email" id="editor_email" value={editor_email} onChange={changeEditorEmail} />
@@ -281,22 +280,15 @@ return (
           {deleteMessage}
         </div>
       )}
-
-       <UpdateManuscriptForm
-        visible={updatingManus !== null}
-        manuscript={updatingManus || {}}
-        cancel={() => setUpdatingManus(null)}
-        fetchManus={fetchManus}
-        setError={setError}
-      />
       
-
       <AddManuscript
         visible={addingManus}
         cancel={() => setAddingManus(false)}
         fetchManus={fetchManus}
         setError={setError}
       />
+
+      
      {error && <ErrorMessage message={error} />}
       {manuscripts.map((manuscript) => (
         <div key={manuscript.title} className="manuscript-container">
@@ -308,7 +300,15 @@ return (
           <p>Editor Email: {manuscript.editor_email}</p>
           <p>Referees: {manuscript.referee}</p>
           <button onClick={() => setUpdatingManus(manuscript)}>Update</button>
+
           <button onClick={() => deleteManus(manuscript.title)}>Delete</button>
+          {updatingManus && updatingManus.title === manuscript.title && <UpdateManuscriptForm
+            visible={updatingManus !== null}
+            manuscript={updatingManus || {}}
+            cancel={() => setUpdatingManus(null)}
+            fetchManus={fetchManus}
+            setError={setError}
+          />}
         </div>
       ))}
     </div>

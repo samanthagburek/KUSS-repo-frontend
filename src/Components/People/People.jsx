@@ -24,6 +24,7 @@ function AddPersonForm({
   const [affiliation, setAffiliation] = useState('');
   const [role, setRole] = useState('');
   const [roleOptions, setRoleOptions] = useState('');
+  const [addMsg, setAddsMsg] = useState('');
 
   const changeName = (event) => { setName(event.target.value); };
   const changeEmail = (event) => { setEmail(event.target.value); };
@@ -39,8 +40,17 @@ function AddPersonForm({
       affiliation: affiliation,
     }
     axios.put(PEOPLE_CREATE_ENDPOINT, newPerson)
-      .then(fetchPeople)
-      .catch((error) => { setError(`There was a problem adding the person. ${error}`); });
+     .then(() => {
+        setAddsMsg(`${name} has been added successfully!`);
+        setTimeout(() => {
+          setAddsMsg('');
+          cancel();
+        }, 3000);
+        fetchPeople();
+      })
+      .catch((error) => {
+        setError(`There was a problem adding the person. ${error}`);
+      });
   };
   const getRoles = () => {
     axios.get(ROLES_ENDPOINT)
@@ -51,6 +61,8 @@ function AddPersonForm({
 
   if (!visible) return null;
   return (
+    <div>
+      {addMsg && <div className="add-popup">{addMsg}</div>}
     <form>
       <label htmlFor="name">
         Name
@@ -77,6 +89,7 @@ function AddPersonForm({
       <button type="button" onClick={cancel}>Cancel</button>
       <button type="button" onClick={addPerson}>Submit</button>
     </form>
+    </div>
   );
 }
 AddPersonForm.propTypes = {
