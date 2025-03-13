@@ -20,15 +20,6 @@ function PersonPage() {
   return <h1>{name}</h1>
 }
 
-// const homeHeader = "The KUSS Journal";
-
-// function Home(){
-//   const styles = {
-//     'textAlign': 'center',
-//   }
-//   return <h1 style={styles}>{homeHeader}</h1>
-// }
-
 function App() {
   return (
     <BrowserRouter>

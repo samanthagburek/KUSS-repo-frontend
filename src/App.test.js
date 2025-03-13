@@ -8,14 +8,8 @@ import {homeHeader} from './App';
 describe('App', () => {
   it('renders nav and home', async () => {
     render(<App />);
-
-    await screen.findByRole('heading');
-    await screen.findAllByRole('listitem');
-
-    expect(screen.getByRole('heading'))
-      .toHaveTextContent(homeHeader);
     
-    expect(screen.getAllByRole('listitem')).toHaveLength(3);
+    expect(screen.getAllByRole('listitem')).toHaveLength(5);
   });
 it('switches to People view', async () => {
     render(<App />);
