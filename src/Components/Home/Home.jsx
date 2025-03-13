@@ -6,12 +6,12 @@ import { BACKEND_URL } from '../../constants';
 import './Home.css';
 
 const TEXT_READ_ENDPOINT = `${BACKEND_URL}/text`;
-const TEXT_UPDATE_ENDPOINT = `${BACKEND_URL}/text`;
+// const TEXT_UPDATE_ENDPOINT = `${BACKEND_URL}/text`;
 
 
 const Home = () => {
     const [aboutText, setAboutText] = useState('');
-    const [isEditing, setIsEditing] = useState(false);
+    //const [isEditing, setIsEditing] = useState(false);
     const [error, setError] = useState('');
 
  useEffect(() => {
@@ -25,56 +25,49 @@ const Home = () => {
             .catch(error => setError(`Error fetching about us data: ${error}`));
     }, []);
 
-const handleChange = (event) => {
-        setAboutText(event.target.value);
-    };
+// const handleChange = (event) => {
+//         setAboutText(event.target.value);
+//     };
 
-const updateAboutUs = () => {
-        const updatedText = {
-            key: "about_us",
-            title: "About Us",
-            text: aboutText,
-        };
+// const updateAboutUs = () => {
+//         const updatedText = {
+//             key: "about_us",
+//             title: "About Us",
+//             text: aboutText,
+//         };
 
-        axios.patch(TEXT_UPDATE_ENDPOINT, updatedText)
-            .then(() => {
-                setIsEditing(false);
-            })
-            .catch(error => setError(`Error updating about us: ${error}`));
-    };
+//         axios.patch(TEXT_UPDATE_ENDPOINT, updatedText)
+//             .then(() => {
+//                 setIsEditing(false);
+//             })
+//             .catch(error => setError(`Error updating about us: ${error}`));
+//     };
 
  return (
-        <div style={{ textAlign: 'center', padding: '20px' }}>
+        <div className="journal-title">
             <h1>The KUSS Journal</h1>
 
             <section>
     
-                {isEditing ? (
+                {/* {isEditing ? (
                     <textarea 
                         value={aboutText} 
                         onChange={handleChange} 
                         rows={4} 
                         style={{ width: '80%', padding: '10px', fontSize: '16px', lineHeight: '1.6' }}
                     />
-                ) : (
+                ) : ( */}
                   <div className="about-container">
-                    <p style={{ 
-                        fontSize: '21px', 
-                        fontWeight: '400', 
-                        lineHeight: '1.6', 
-                        whiteSpace: 'pre-line'
-                    }}>
-                   
-                        {aboutText}
+                    <p> {aboutText}
                     </p>
                   </div>
-                )}
-                <button 
-                    onClick={isEditing ? updateAboutUs : () => setIsEditing(true)} 
+              
+                {/* <button 
+                   onClick={isEditing ? updateAboutUs : () => setIsEditing(true)} 
                     style={{ marginTop: '10px', padding: '5px 5px', fontSize: '18px', cursor: 'pointer' }}
                 >
-                    {isEditing ? 'Save' : 'Edit'}
-                </button>
+                    // {isEditing ? 'Save' : 'Edit'}
+                </button> */}
 
                 {error && <div style={{ color: 'red', marginTop: '10px' }}>{error}</div>}
             </section>

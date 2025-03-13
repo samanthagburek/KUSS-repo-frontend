@@ -1,3 +1,106 @@
+/* .text-container {
+    border: 2px solid black;
+  } */
+
+/* Text Container */
 .text-container {
-    border: 5px solid black;
-  }
+  border-bottom: 1px solid #1f7602;
+  padding-bottom: 20px;
+  margin-bottom: 40px;
+  border-width: 3px;
+}
+
+.text-container p {
+  font-size: 20px;
+  margin: 20px;
+  font-weight: 500;
+
+}
+
+.popup-message {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: black;
+  color: #A3C19A;
+  padding: 10px 15px;
+  border-radius: 5px;
+  font-size: 20px;
+  font-weight: bold;
+  z-index: 1000;
+  opacity: 1;
+  display: block;
+}
+
+.delete-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: black;
+  color: #A3C19A;
+  padding: 10px 15px;
+  border-radius: 5px;
+  font-size: 20px;
+  font-weight: bold;
+  z-index: 1000;
+  opacity: 1;
+  display: block;
+}
+
+.update-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: black;
+  color: #A3C19A;
+  padding: 10px 15px;
+  border-radius: 5px;
+  font-size: 20px;
+  font-weight: bold;
+  z-index: 1000;
+  opacity: 1;
+  display: block;
+}
+
+
+
+.text-container input,
+.text-container textarea {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 5px;
+  margin-bottom: 15px;
+}
+
+.text-container textarea {
+  min-height: 80px;
+}
+
+
+.text-container button[type="submit"] {
+  font-weight: bold;
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px 15px;
+  font-size: 18px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-right: 10px;
+}
+
+.text-container button[type="button"] {
+  font-weight: bold;
+  background-color: #ff0000;
+  color: #fcfcfc;
+  padding: 10px 15px;
+  font-size: 18px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-right: 10px;
+}

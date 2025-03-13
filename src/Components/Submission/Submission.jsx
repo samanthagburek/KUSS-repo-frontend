@@ -62,11 +62,17 @@ function AddManuscript({ visible, cancel, fetchManus, setError }) {
     axios.put(MANUSCRIPTS_ENDPOINT, newManuscript)
       .then(() => {
         setAddMsg(true);
+        setTitle('');
+        setAuthor('');
+        setAuthorEmail('');
+        setText('');
+        setAbstract('');
+        setEditorEmail('');
         setTimeout(() => {
         setAddMsg('');
         cancel();
         fetchManus();
-      },3000); })
+      },2000); })
       .catch((error) => setError(`Error submitting manuscript: ${error.message}`));
   };
 if (!visible) return null;
@@ -175,7 +181,7 @@ const changereferee = (event) => { setReferee(event.target.value); };
           setUpdateMessage('');
           cancel();
           fetchManus();
-        }, 3000);
+        }, 2000);
       })
       .catch((error) => setError(`Error updating manuscript: ${error.message}`));
   };
@@ -194,14 +200,10 @@ if (!visible) return null;
         <input type="email" id="author_email" value={author_email} onChange={changeAuthorEmail} />
 
         <label htmlFor="text">Text</label>
-        <textarea id="text" value={text} onChange={changeText} 
-          rows="5" 
-          style={{ width: '50%', padding: '20', fontSize: '16px' }}/>
+        <textarea id="text" value={text} onChange={changeText} />
 
         <label htmlFor="abstract">Abstract</label>
-        <textarea id="abstract" value={abstract} onChange={changeAbstract}
-          rows="5" 
-          style={{ width: '50%', padding: '10px', fontSize: '16px' }} />
+        <textarea id="abstract" value={abstract} onChange={changeAbstract}/>
 
         <label htmlFor="editor_email">Editor Email</label>
         <input type="email" id="editor_email" value={editor_email} onChange={changeEditorEmail} />
@@ -244,7 +246,7 @@ function Submission() {
 
   useEffect(() => {
     if (deleteMessage) {
-      const timer = setTimeout(() => setDeleteMessage(''), 5000);
+      const timer = setTimeout(() => setDeleteMessage(''), 2000);
       return () => clearTimeout(timer);
     }
   }, [deleteMessage])
