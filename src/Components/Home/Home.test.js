@@ -22,7 +22,7 @@ describe('Home', () => {
     });
   });
 
-    it('handles API error', async () => {
+    it('handles error', async () => {
         axios.get.mockRejectedValueOnce(new Error('Something is wrong'));
         render(<Home />);
         await waitFor(() => {
