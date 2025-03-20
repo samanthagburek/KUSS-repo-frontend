@@ -103,11 +103,6 @@ function AddPersonForm({
           ))
         }
       </div>
-      <ul>
-        {roles.map(role => (
-          <li key={role}>{role}</li>
-        ))}
-      </ul>
       <button type="button" onClick={cancel}>Cancel</button>
       <button type="button" onClick={addPerson}>Submit</button>
     </form>
@@ -142,9 +137,22 @@ function UpdatePersonForm({
   const [name, setName] = useState(person.name);
   const [affiliation, setAffiliation] = useState(person.affiliation);
   const [updateMsg, setUpdateMsg] = useState('');
-  const [role, setRole] = useState('');
+  const [roles, setRoles] = useState(person.roles);
   const [roleOptions, setRoleOptions] = useState('');
-  const changeRole = (event) => {setRole(event.target.value); };
+  const changeRoles = (event) => {
+    if(roles.includes(event.target.value)) {
+      setRoles(
+        roles.filter(a =>
+          a !== event.target.value
+        )
+      );
+    } else {
+      setRoles([
+        ...roles,
+        event.target.value
+      ]);
+    }
+  }
 
   useEffect(() => {
     setName(person.name);
@@ -157,7 +165,11 @@ function UpdatePersonForm({
   const updatePerson = (event) => {
     event.preventDefault();
     const updatedPerson = {
-      email: person.email, name, affiliation, role};
+      name: name,
+      email: person.email,
+      roles: roles,
+      affiliation: affiliation,
+    }
     
     axios.patch(PEOPLE_UPDATE_ENDPOINT, updatedPerson)
     .then(() => {
@@ -187,18 +199,23 @@ function UpdatePersonForm({
         <label htmlFor="affiliation">Affiliation</label>
         <input type="text" id="affiliation" value={affiliation} onChange={changeAffiliation} />
         
-        <select name='role' onChange={changeRole}>
-        {
-          Object.keys(roleOptions).map((code)=>(
-            <option key={code} value={code}>
-              {roleOptions[code]}
-            </option>
-          ))
-        }
-      </select>
+        <label htmlFor="role">
+        Role
+        </label>
+        <div className="person-container">
+          {
+            Object.keys(roleOptions).map((code)=>(
+              <div key={code}>
+                <label htmlFor={code}>{roleOptions[code]}</label><br></br>
+                <input type="checkbox" id={code} value={code} onChange={changeRoles} defaultChecked={roles.includes(code)} />
+                
+              </div>
+            ))
+          }
+        </div>
 
         <button type="button" onClick={cancel}>Cancel</button>
-        <button type="submit" onClick={updatePerson}>Update</button>
+        <button type="submit" onClick={updatePerson}>Submit</button>
       </form>
     </div>
   );
@@ -210,6 +227,7 @@ UpdatePersonForm.propTypes = {
     name: propTypes.string.isRequired,
     email: propTypes.string.isRequired,
     affiliation: propTypes.string.isRequired,
+    roles: propTypes.array.isRequired,
   }).isRequired,
   cancel: propTypes.func.isRequired,
   fetchPeople: propTypes.func.isRequired,
@@ -267,6 +285,7 @@ function Person({ person, fetchPeople }) {
     </div>
   );
 }
+
 Person.propTypes = {
   person: propTypes.shape({
     name: propTypes.string.isRequired,
