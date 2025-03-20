@@ -3,7 +3,7 @@ import {
   BrowserRouter,
   Routes,
   Route,
-  useParams,
+  // useParams,
 } from 'react-router-dom';
 
 import './App.css';
@@ -15,10 +15,10 @@ import Masthead from './Components/Masthead';
 import Submission from './Components/Submission';
 import Home from './Components/Home';
 
-function PersonPage() {
-  const { name } = useParams();
-  return <h1>{name}</h1>
-}
+// function PersonPage() {
+//   const { name } = useParams();
+//   return <h1>{name}</h1>
+// }
 
 function App() {
   return (
@@ -27,7 +27,6 @@ function App() {
       <Routes>
         <Route index element={<Home/>}/>
         <Route path="people" element={<People />} />
-        <Route path="people/:name" element={<PersonPage />} />
         <Route path="text" element={<Text />} />
         <Route path="masthead" element={<Masthead />} />
         <Route path="submission" element={<Submission />} />

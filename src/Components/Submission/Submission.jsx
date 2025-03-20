@@ -274,7 +274,7 @@ useEffect(fetchManus, []);
 return (
     <div className="wrapper">
       <header>
-        <h1>View All Manuscripts</h1>
+        <h1>Dashboard</h1>
         <button type="button" onClick={() => setAddingManus(true)}>Add a Manuscript</button>
       </header>
        {deleteMessage && (

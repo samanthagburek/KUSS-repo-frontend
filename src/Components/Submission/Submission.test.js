@@ -9,7 +9,7 @@ jest.mock('axios');
 
 
 describe('Submission', () => {
-    it('renders the view all manuscript page', async () => {
+    it('renders the dashboard page', async () => {
         const mockData = {
             data: {
                 1: {
@@ -26,7 +26,7 @@ describe('Submission', () => {
     axios.get.mockResolvedValueOnce(mockData);
     render(<Submission />);
 
-    expect(screen.getByText(/View All Manuscripts/i)).toBeInTheDocument();
+    expect(screen.getByText(/Dashboard/i)).toBeInTheDocument();
 
     await waitFor(() => {
       expect(screen.getByText(/Mock manuscript/i)).toBeInTheDocument();

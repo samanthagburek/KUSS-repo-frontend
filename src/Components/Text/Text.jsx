@@ -175,7 +175,7 @@ UpdateTextForm.propTypes = {
 function Text() {
     const [error, setError] = useState('');
     const [texts, setTexts] = useState([]);
-     const [addingText, setAddingText] = useState(false);
+    const [addingText, setAddingText] = useState(false);
     const [delMsg, setdelMsg] = useState('');
     const [updating, setUpdating] = useState(null);
 
