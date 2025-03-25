@@ -191,9 +191,12 @@ function Submission() {
         <label htmlFor="guidelinesCheck">I have read and agree to the submission guidelines</label>
         </div>
     <div className="wrapper">
-        <div className="add-button-row">
+
+        {!addingManus ? (
             <button onClick={() => setAddingManus(true)}>Submit a Manuscript</button>
-        </div>
+        ) : (
+            <h2 className="submit-manuscript-heading">Submit a Manuscript</h2>
+        )}
 
         
         <AddManuscript

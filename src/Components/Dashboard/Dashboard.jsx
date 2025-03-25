@@ -167,8 +167,33 @@ return (
       )}
 
      {error && <ErrorMessage message={error} />}
-      {manuscripts.map((manuscript) => (
-        <div key={manuscript.title} className="manuscript-container">
+      {manuscripts.map((manuscript) => {
+  const isUpdating = updatingManus && updatingManus.title === manuscript.title;
+
+  return (
+    <div key={manuscript.title} className="manuscript-container">
+      {isUpdating ? (
+        <>
+          <div key={manuscript.title} className="manuscript-container">
+           <h2>Title: {manuscript.title}</h2>
+           <p>Author: {manuscript.author}</p>
+           <p>Author Email: {manuscript.author_email}</p>
+           <p>Text: {manuscript.text}</p>
+           <p>Abstract: {manuscript.abstract}</p>
+           <p>Editor Email: {manuscript.editor_email}</p>
+           <p>Referees: {manuscript.referee}</p>
+           </div>
+
+        <UpdateManuscriptForm
+          visible={true}
+          manuscript={updatingManus}
+          cancel={() => setUpdatingManus(null)}
+          fetchManus={fetchManus}
+          setError={setError}
+        />
+        </>
+      ) : (
+        <>
           <h2>Title: {manuscript.title}</h2>
           <p>Author: {manuscript.author}</p>
           <p>Author Email: {manuscript.author_email}</p>
@@ -177,20 +202,16 @@ return (
           <p>Editor Email: {manuscript.editor_email}</p>
           <p>Referees: {manuscript.referee}</p>
           <button onClick={() => setUpdatingManus(manuscript)}>Update</button>
-
           <button onClick={() => deleteManus(manuscript.title)}>Delete</button>
-          {updatingManus && updatingManus.title === manuscript.title && <UpdateManuscriptForm
-            visible={updatingManus !== null}
-            manuscript={updatingManus || {}}
-            cancel={() => setUpdatingManus(null)}
-            fetchManus={fetchManus}
-            setError={setError}
-          />}
-        </div>
-      ))}
+        </>
+      )}
     </div>
   );
+})}
+</div>
+  );
 }
+
 
 
 export default Dashboard;

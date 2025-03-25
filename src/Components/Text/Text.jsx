@@ -222,7 +222,11 @@ function Text() {
         <div className="wrapper">
       <header>
         <h1>View All Texts</h1>
-        <button type="button" onClick={() => setAddingText(true)}>Add a Text</button>
+        {!addingText ? (
+          <button type="button" onClick={() => setAddingText(true)}>Add a Text</button>
+        ) : (
+          <h2 className="add-text-heading">Add a Text</h2>
+        )}
       </header>
 
       {delMsg && <div className="delete-popup">{delMsg}</div>}
@@ -235,24 +239,37 @@ function Text() {
         setError={setError}
       />
 
-      {texts.map((text) => (
-        <div key={text.key} className="text-container">
+     {texts.map((text) => {
+  const isUpdating = updating && updating.key === text.key;
+
+  return (
+    <div key={text.key} className="text-container">
+      {isUpdating ? (
+        <>
+          <p><strong>Key:</strong> {text.key}</p>
+          <p><strong>Title:</strong> {text.title}</p>
+          <p><strong>Text:</strong> {text.text}</p>
+          <UpdateTextForm
+            visible={true}
+            textItem={text}
+            cancel={() => setUpdating(null)}
+            fetchText={fetchText}
+            setError={setError}
+          />
+
+        </>
+      ) : (
+        <>
           <h2>Title: {text.title}</h2>
           <p>Text: {text.text}</p>
           <button onClick={() => setUpdating(text)}>Update</button>
           <button onClick={() => deleteText(text.key, text.title)}>Delete</button>
+        </>
+      )}
+    </div>
+  );
+})}
 
-          {updating && updating.key === text.key && (
-            <UpdateTextForm
-              visible={updating !== null}
-              textItem={updating}
-              cancel={() => setUpdating(null)}
-              fetchText={fetchText}
-              setError={setError}
-            />
-          )}
-        </div>
-      ))}
     </div>
   );
 }
@@ -265,51 +282,5 @@ Text.propTypes = {
     }).isRequired,
     fetchText: propTypes.func,
 };
-
-// function textObjectToArray(Data) {
-//     const keys = Object.keys(Data);
-//     const texts = keys.map((key) => Data[key]);
-//     return texts;
-// }
-
-// function Text() {
-//     const [error, setError] = useState('');
-//     const [texts, setText] = useState([]);
-//     const [addingText, setAddingText] = useState(false);
-
-//     const fetchText = () => {
-//         axios.get(TEXT_READ_ENDPOINT)
-//             .then(
-//                 ({ data }) => { setText(textObjectToArray(data)) }
-//             )
-//             .catch((error) => setError(`There was a problem retrieving the list of texts. ${error}`));
-//     };
-
-//     const showAddTextForm = () => { setAddingText(true); };
-//     const hideAddTextForm = () => { setAddingText(false); };
-
-//     useEffect(fetchText, []);
-
-//     return (
-//         <div className="wrapper">
-//             <header>
-//                 <h1>
-//                     View All Texts
-//                 </h1>
-//                 <button type="button" onClick={showAddTextForm}>
-//                     Add a Text
-//                 </button>
-//             </header>
-//             <AddTextForm
-//                 visible={addingText}
-//                 cancel={hideAddTextForm}
-//                 fetchText={fetchText}
-//                 setError={setError}
-//             />
-//             {error && <ErrorMessage message={error} />}
-//             {texts.map((text) => <TextItem key={text.key} thetext={text} fetchText={fetchText} />)}
-//         </div>
-//     );
-// }
 
 export default Text;

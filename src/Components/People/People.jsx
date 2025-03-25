@@ -173,7 +173,7 @@ function UpdatePersonForm({
     
     axios.patch(PEOPLE_UPDATE_ENDPOINT, updatedPerson)
     .then(() => {
-        setUpdateMsg(`Information updated for ${name}`);
+        setUpdateMsg(`Information updated for ${person.email}`);
         setTimeout(() => {setUpdateMsg(''); cancel();}, 3000);
         fetchPeople();
       })
@@ -259,31 +259,40 @@ function Person({ person, fetchPeople }) {
   }
 
   return (
-    <div>
-      
+  <div className="person-wrapper">
+    {updating ? (
+      <>
         <div className="person-container">
+         
             <h2>{name}</h2>
-
           <p> Email: {email} </p>
           <p> Affiliation: {affiliation} </p>
-          <p> Role: {roles} </p>
-            
+          <p> Roles: {roles.join(', ')} </p>
+          
         </div>
-      <button onClick={() => setUpdating(true)}>Update</button>
-      <button onClick={deletePerson}>Delete person</button>
-      {delMsg && (
-        <div className="delete-popup">
-          {delMsg}
-        </div>)}
         <UpdatePersonForm
-        visible={updating}
-        person={person}
-        cancel={() => setUpdating(false)}
-        fetchPeople={fetchPeople}
-        setError={() => {}}
+          visible={true}
+          person={person}
+          cancel={() => setUpdating(false)}
+          fetchPeople={fetchPeople}
+          setError={() => {}}
         />
-    </div>
-  );
+      </>
+    ) : (
+      <>
+        <div className="person-container">
+          <h2>{name}</h2>
+          <p> Email: {email} </p>
+          <p> Affiliation: {affiliation} </p>
+          <p> Roles: {roles.join(', ')} </p>
+        </div>
+        <button onClick={() => setUpdating(true)}>Update</button>
+        <button onClick={deletePerson}>Delete person</button>
+        {delMsg && <div className="delete-popup">{delMsg}</div>}
+      </>
+    )}
+  </div>
+);
 }
 
 Person.propTypes = {
@@ -327,9 +336,13 @@ function People() {
         <h1>
           View All People
         </h1>
-        <button type="button" onClick={showAddPersonForm}>
-          Add a Person
-        </button>
+         {!addingPerson ? (
+    <button type="button" onClick={showAddPersonForm}>
+      Add a Person
+    </button>
+  ) : (
+    <h2 className="add-person-heading">Add a Person</h2> 
+  )}
       </header>
       <AddPersonForm
         visible={addingPerson}
