@@ -1,14 +1,12 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import userEvent from '@testing-library/user-event'
-import Submission from './Submission';
+// import userEvent from '@testing-library/user-event'
+import Dashboard from './Dashboard';
 import axios from 'axios';
 
 jest.mock('axios');
 
-
-
-describe('Submission', () => {
+describe('Dashboard', () => {
     it('renders the dashboard page', async () => {
         const mockData = {
             data: {
@@ -24,7 +22,7 @@ describe('Submission', () => {
             }
         };
     axios.get.mockResolvedValueOnce(mockData);
-    render(<Submission />);
+    render(<Dashboard />);
 
     expect(screen.getByText(/Dashboard/i)).toBeInTheDocument();
 
@@ -42,7 +40,7 @@ describe('Submission', () => {
   });
 it('handles error', async () => {
     axios.get.mockRejectedValueOnce(new Error('Failed to fetch manuscripts'));
-    render(<Submission />);
+    render(<Dashboard />);
 
     await waitFor(() => {
       expect(screen.getByText(/There was a problem retrieving manuscripts/i)).toBeInTheDocument();

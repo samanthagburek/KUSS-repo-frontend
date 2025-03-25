@@ -14,6 +14,7 @@ import Text from './Components/Text';
 import Masthead from './Components/Masthead';
 import Submission from './Components/Submission';
 import Home from './Components/Home';
+import Dashboard from './Components/Dashboard';
 
 // function PersonPage() {
 //   const { name } = useParams();
@@ -30,6 +31,8 @@ function App() {
         <Route path="text" element={<Text />} />
         <Route path="masthead" element={<Masthead />} />
         <Route path="submission" element={<Submission />} />
+        <Route path="dashboard" element={<Dashboard />} />
+
       </Routes>
     </BrowserRouter>
   );
