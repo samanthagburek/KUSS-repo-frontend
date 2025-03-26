@@ -90,9 +90,9 @@ function AddPersonForm({
       <input required type="text" id="affiliation" onChange={changeAffiliation} />
       
       <label htmlFor="role">
-        Role
+        Roles
       </label>
-      <div className="person-container">
+      <div className="roles-container">
         {
           Object.keys(roleOptions).map((code)=>(
             <div key={code}>
@@ -200,9 +200,9 @@ function UpdatePersonForm({
         <input type="text" id="affiliation" value={affiliation} onChange={changeAffiliation} />
         
         <label htmlFor="role">
-        Role
+        Roles
         </label>
-        <div className="person-container">
+        <div className="roles-container">
           {
             Object.keys(roleOptions).map((code)=>(
               <div key={code}>

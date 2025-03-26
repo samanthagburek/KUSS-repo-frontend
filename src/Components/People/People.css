@@ -1,6 +1,16 @@
-.person-container {
+ .person-container {
     border: 5px solid black;
+    display:flex;
+    flex-direction: column;
   }
+  .roles-container {
+    border: 3px solid #A3C19A;
+    display:flex;
+    flex-direction: row;
+    padding: 40px 10px;
+    border-radius: 5px;
+  }
+
 
   .delete-popup {
   position: fixed;
