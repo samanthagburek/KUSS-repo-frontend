@@ -239,6 +239,20 @@ function Person({ person, fetchPeople }) {
   const { name, email, affiliation, roles } = person;
   const [delMsg, setdelMsg] = useState('');
   const [updating, setUpdating] = useState(false);
+  const [roleOptions, setRoleOptions] = useState('');
+  
+  const rolesByName = roles.map(role => roleOptions[role]);
+  const rolesString = roles.length > 1 ? 
+                      rolesByName.slice(0,-1).join(", ") + " and " + rolesByName[roles.length-1]
+                      : rolesByName[0];
+
+  const getRoles = () => {
+    axios.get(ROLES_ENDPOINT)
+      .then(({ data }) => {setRoleOptions(data)})
+  }
+  useEffect(getRoles, []);
+
+   roles.join(', ');
 
   const deletePerson = () => {
     const confirmDelete = window.confirm(`Are you sure you want to delete ${name}?`);
@@ -264,11 +278,10 @@ function Person({ person, fetchPeople }) {
       <>
         <div className="person-container">
          
-            <h2>{name}</h2>
-          <p> Email: {email} </p>
-          <p> Affiliation: {affiliation} </p>
-          <p> Roles: {roles.join(', ')} </p>
-          
+        <h2>{name}</h2> <br></br>
+          <p>{rolesString} at {affiliation}</p>
+          <br></br>
+          <p> Contact: {email} </p>
         </div>
         <UpdatePersonForm
           visible={true}
@@ -281,10 +294,10 @@ function Person({ person, fetchPeople }) {
     ) : (
       <>
         <div className="person-container">
-          <h2>{name}</h2>
-          <p> Email: {email} </p>
-          <p> Affiliation: {affiliation} </p>
-          <p> Roles: {roles.join(', ')} </p>
+          <h2>{name}</h2> <br></br>
+          <p>{rolesString} at {affiliation}</p>
+          <br></br>
+          <p> Contact: {email} </p>
         </div>
         <button onClick={() => setUpdating(true)}>Update</button>
         <button onClick={deletePerson}>Delete person</button>
@@ -321,6 +334,7 @@ function People() {
     axios.get(PEOPLE_READ_ENDPOINT)
       .then(
         ({ data }) => { setPeople(peopleObjectToArray(data)) }
+        
     )
       .catch((error) => setError(`There was a problem retrieving the list of people. ${error}`));
   };
@@ -330,6 +344,7 @@ function People() {
 
   useEffect(fetchPeople, []);
 
+  
   return (
     <div className="wrapper">
       <header>
