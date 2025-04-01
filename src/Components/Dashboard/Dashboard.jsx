@@ -22,7 +22,6 @@ function UpdateManuscriptForm({ visible, manuscript, cancel, fetchManus, setErro
   const [text, setText] = useState(manuscript.text);
   const [abstract, setAbstract] = useState(manuscript.abstract);
   const [editor_email, setEditorEmail] = useState(manuscript.editor_email);
-  const [referee, setReferee] = useState("");
   const [updateMessage, setUpdateMessage] = useState('');
 
 useEffect(() => {
@@ -33,7 +32,6 @@ useEffect(() => {
     setText(manuscript.text);
     setAbstract(manuscript.abstract);
     setEditorEmail(manuscript.editor_email);
-    setReferee('');
     }
   }, [manuscript]);
 
@@ -44,7 +42,6 @@ const changeAuthorEmail = (event) => { setAuthorEmail(event.target.value); };
 const changeText = (event) => { setText(event.target.value); };
 const changeAbstract = (event) => { setAbstract(event.target.value); };
 const changeEditorEmail = (event) => { setEditorEmail(event.target.value); };
-const changereferee = (event) => { setReferee(event.target.value); };
 
   const updateManuscript = (event) => {
     event.preventDefault();
@@ -56,7 +53,6 @@ const changereferee = (event) => { setReferee(event.target.value); };
       text: text, 
       abstract: abstract,
       editor_email: editor_email,
-      referee: referee
     };
     
     axios.patch(MANUSCRIPTS_ENDPOINT, updatedManuscript)
@@ -92,8 +88,6 @@ if (!visible) return null;
 
         <label htmlFor="editor_email">Editor Email</label>
         <input type="email" id="editor_email" value={editor_email} onChange={changeEditorEmail} />
-        <label htmlFor="referee">Referee</label>
-        <input type="text" id="referee" value={referee} onChange={changereferee} />
 
         <button type="button" onClick={cancel}>Cancel</button>
         <button type="submit" onClick={updateManuscript}>Update</button>
