@@ -71,3 +71,13 @@
   width: 100%;
   display: block;
 }
+
+.delete-button {
+  border: 2px solid rgb(204, 61, 70);
+  color: rgb(204, 61, 70);
+  background: hsla(45, 29%, 97%, 1);
+}
+.delete-button:hover {
+  background: rgb(204, 61, 70);
+  color: hsla(45, 29%, 97%, 1);
+}

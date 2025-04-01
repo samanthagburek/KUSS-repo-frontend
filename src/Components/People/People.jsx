@@ -301,7 +301,7 @@ function Person({ person, fetchPeople }) {
           
         </div>
         <button onClick={() => setUpdating(true)}>Update</button>
-        <button onClick={deletePerson}>Delete person</button>
+        <button className="delete-button" onClick={deletePerson}>Delete person</button>
         {delMsg && <div className="delete-popup">{delMsg}</div>}
       </>
     )}

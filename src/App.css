@@ -5,7 +5,7 @@
 }
 
 html {
-  --poppy: hsla(356, 74%, 52%, 1);
+  --poppy: rgb(204, 61, 70);
   --cambridge-blue: hsla(132, 27%, 63%, 1);
   --lemon-chiffon: hsla(58, 74%, 85%, 1);
   --buff: hsla(27, 64%, 65%, 1);

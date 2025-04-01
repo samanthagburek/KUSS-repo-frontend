@@ -74,13 +74,13 @@ header button {
 
 .submission-container button[type="submit"] {
   font-weight: bold;
-  background-color: #4CAF50;
+  background-color: hsla(132, 27%, 63%, 1);
   color: white;
 }
 
 .submission-container button[type="button"] {
   font-weight: bold;
-  background-color: #ff0000;
+  background-color: rgb(204, 61, 70);
   color: #fcfcfc;
 }
 .checkbox-wrapper {
