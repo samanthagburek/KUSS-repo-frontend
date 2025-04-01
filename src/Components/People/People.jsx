@@ -297,7 +297,8 @@ function Person({ person, fetchPeople }) {
           <h2>{name}</h2> <br></br>
           <p>{rolesString} at {affiliation}</p>
           <br></br>
-          <p> Contact: {email} </p>
+          <p>Contact: <a href={`mailto:${email}`}>{email}</a></p>
+          
         </div>
         <button onClick={() => setUpdating(true)}>Update</button>
         <button onClick={deletePerson}>Delete person</button>
