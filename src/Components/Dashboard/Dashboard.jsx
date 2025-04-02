@@ -47,6 +47,7 @@ const changeEditorEmail = (event) => { setEditorEmail(event.target.value); };
     event.preventDefault();
 
     const updatedManuscript = {
+      _id : manuscript._id,
       title: title,
       author: author,
       author_email: author_email,
@@ -98,6 +99,7 @@ if (!visible) return null;
 UpdateManuscriptForm.propTypes = {
   visible: propTypes.bool.isRequired,
   manuscript: propTypes.shape({
+      _id: propTypes.string.isRequired,
       title: propTypes.string.isRequired,
       author: propTypes.string.isRequired,
       author_email: propTypes.string.isRequired,
@@ -135,13 +137,13 @@ const fetchManus = () => {
       .catch((error) => setError(`There was a problem retrieving manuscripts. ${error.message}`));
   };
 
-const deleteManus = (title) => {
+const deleteManus = (_id, title) => {
     const confirmDelete = window.confirm(`Are you sure you want to delete "${title}"?`);
     if (!confirmDelete) return;
 
-    axios.delete(MANUSCRIPTS_ENDPOINT, { data: { title } })
+    axios.delete(MANUSCRIPTS_ENDPOINT, { data: { _id } })
       .then(() => {
-        setManus(manuscripts.filter(m => m.title !== title));
+        setManus(manuscripts.filter(m => m._id !== _id));
         setDeleteMessage(`Manuscript "${title}" deleted successfully.`);
       })
       .catch((error) => setError(`Error deleting manuscript: ${error.message}`));
@@ -196,7 +198,7 @@ return (
           <p>Editor Email: {manuscript.editor_email}</p>
           <p>Referees: {manuscript.referee}</p>
           <button onClick={() => setUpdatingManus(manuscript)}>Update</button>
-          <button onClick={() => deleteManus(manuscript.title)}>Delete</button>
+          <button onClick={() => deleteManus(manuscript._id, manuscript.title)}>Delete</button>
         </>
       )}
     </div>
