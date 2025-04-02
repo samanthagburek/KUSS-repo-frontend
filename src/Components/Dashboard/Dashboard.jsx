@@ -123,7 +123,7 @@ function SendActionForm({ visible, manuscript, cancel, fetchManus, setError }) {
   const [action, SetAction] = useState('');
   const [actionOptions, setActionOptions] = useState('');
 
-  const changeAction = (event) => { SetAction(actionOptions[event.target.value]); };
+  const changeAction = (event) => { SetAction(event.target.value); };
 
 useEffect(() => {
    if (manuscript) {
