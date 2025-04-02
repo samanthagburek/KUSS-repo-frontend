@@ -13,7 +13,7 @@ function AddManuscript({ visible, cancel, fetchManus, setError, hasReadGuideline
     const [author_email, setAuthorEmail] = useState('');
     const [text, setText] = useState('');
     const [abstract, setAbstract] = useState('');
-    const [editor_email, setEditorEmail] = useState('');
+    // const [editor_email, setEditorEmail] = useState('');
     const [addMsg, setAddMsg] = useState(false);
     const [errors, setErrors] = useState([]);
 
@@ -23,7 +23,7 @@ function AddManuscript({ visible, cancel, fetchManus, setError, hasReadGuideline
     const changeAuthorEmail = (event) => setAuthorEmail(event.target.value);
     const changeText = (event) => setText(event.target.value);
     const changeAbstract = (event) => setAbstract(event.target.value);
-    const changeEditorEmail = (event) => setEditorEmail(event.target.value);
+    // const changeEditorEmail = (event) => setEditorEmail(event.target.value);
 
     const validateForm = () => {
     const newErrors = [];
@@ -32,7 +32,7 @@ function AddManuscript({ visible, cancel, fetchManus, setError, hasReadGuideline
     if (!author_email.trim()) newErrors.push('Author Email is required.');
     if (!text.trim()) newErrors.push('Text is required.');
     if (!abstract.trim()) newErrors.push('Abstract is required.');
-    if (!editor_email.trim()) newErrors.push('Editor Email is required.');
+    // if (!editor_email.trim()) newErrors.push('Editor Email is required.');
     if (!hasReadGuidelines) newErrors.push('You must agree to the submission guidelines before submitting.');
 
     setErrors(newErrors);
@@ -58,7 +58,7 @@ function AddManuscript({ visible, cancel, fetchManus, setError, hasReadGuideline
         author_email: author_email,
         text: text,
         abstract: abstract,
-        editor_email: editor_email,
+        // editor_email: editor_email,
         referees: {}
     };
 
@@ -70,7 +70,7 @@ function AddManuscript({ visible, cancel, fetchManus, setError, hasReadGuideline
         setAuthorEmail('');
         setText('');
         setAbstract('');
-        setEditorEmail('');
+        // setEditorEmail('');
         setTimeout(() => {
         setAddMsg('');
         setHasReadGuidelines(false); 
@@ -101,8 +101,8 @@ return (
       <label>Abstract</label>
       <textarea value={abstract} onChange={changeAbstract} required />
 
-      <label>Editor Email</label>
-      <input type="email" value={editor_email} onChange={changeEditorEmail} required />
+      {/* <label>Editor Email</label>
+      <input type="email" value={editor_email} onChange={changeEditorEmail} required /> */}
        {errors.length > 0 && (
         <div className="error-message">
           <ul>
