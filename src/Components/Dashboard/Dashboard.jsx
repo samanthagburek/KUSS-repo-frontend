@@ -4,6 +4,8 @@ import axios from 'axios';
 import { BACKEND_URL } from '../../constants';
 import './Dashboard.css';
 const MANUSCRIPTS_ENDPOINT = `${BACKEND_URL}/manuscripts`;
+const MANUSCRIPTS_ACTIONS_ENDPOINT = `${BACKEND_URL}/manuscripts/actions`;
+const MANUSCRIPTS_RECEIVE_ACTION_ENDPOINT = `${BACKEND_URL}/manuscripts/receive_action`;
 
 function ErrorMessage({ message }) {
     return (
@@ -15,6 +17,7 @@ function ErrorMessage({ message }) {
 ErrorMessage.propTypes = {
     message: propTypes.string.isRequired,
 };
+
 function UpdateManuscriptForm({ visible, manuscript, cancel, fetchManus, setError }) {
   const [title, setTitle] = useState(manuscript.title);
   const [author, setAuthor] = useState(manuscript.author);
@@ -89,6 +92,7 @@ if (!visible) return null;
         <label htmlFor="editor_email">Editor Email</label>
         <input type="email" id="editor_email" value={editor_email} onChange={changeEditorEmail} />
 
+        
         <button type="button" onClick={cancel}>Cancel</button>
         <button type="submit" onClick={updateManuscript}>Update</button>
       </form>
@@ -103,16 +107,98 @@ UpdateManuscriptForm.propTypes = {
       author_email: propTypes.string.isRequired,
       text: propTypes.string.isRequired,
       abstract: propTypes.string.isRequired,
+      state: propTypes.string.isRequired,
       editor_email: propTypes.string.isRequired,}).isRequired,
   cancel: propTypes.func.isRequired,
   fetchManus: propTypes.func.isRequired,
   setError: propTypes.func.isRequired,
 };
+
+function SendActionForm({ visible, manuscript, cancel, fetchManus, setError }) {
+  const [title, setTitle] = useState(manuscript.title);
+  const [updateMessage, setUpdateMessage] = useState('');
+
+  const [action, SetAction] = useState('');
+  const [actionOptions, setActionOptions] = useState('');
+
+  const changeAction = (event) => { SetAction(actionOptions[event.target.value]); };
+
+useEffect(() => {
+   if (manuscript) {
+    setTitle(manuscript.title);
+    }
+  }, [manuscript]);
+
+  const getActions = () => {
+    axios.get(MANUSCRIPTS_ACTIONS_ENDPOINT)
+      .then(({ data }) => {setActionOptions(data)})
+      .catch((error) => { setError(`There was a problem getting roles. ${error}`); });
+  }
+  useEffect(getActions, []);
+
+  const updateManuscript = (event) => {
+    event.preventDefault();
+
+    const actionForm = {
+      title: manuscript.title,
+      curr_state: manuscript.state,
+      action: action,
+      referee: "placeholder" //this should change
+    };
+    
+    axios.put(MANUSCRIPTS_RECEIVE_ACTION_ENDPOINT, actionForm)
+      .then(() => {
+        setUpdateMessage(`"${title}" updated successfully!`);
+        setTimeout(() => {
+          setUpdateMessage('');
+          cancel();
+          fetchManus();
+        }, 2000);
+      })
+      .catch((error) => setError(`Error updating "${manuscript.title}""${manuscript.state}""${action}" manuscript: ${error.message}`));
+  };
+if (!visible) return null;
+ return (
+      <div>
+      {updateMessage && <div className="update-popup">{updateMessage}</div>}
+      <form className="dashboard-container">
+      <p>Select an action to send</p>
+        <select name='sendAction' onChange={changeAction}>
+          {
+            Object.keys(actionOptions).map((code)=>(
+              <option key={code} value={code}>
+                {actionOptions[code]}
+              </option>
+            ))
+          }
+        </select> <br></br><br></br>
+        <button type="button" onClick={cancel}>Cancel</button>
+        <button type="submit" onClick={updateManuscript}>Update</button>
+      </form>
+    </div>
+ );
+}
+SendActionForm.propTypes = {
+  visible: propTypes.bool.isRequired,
+  manuscript: propTypes.shape({
+      title: propTypes.string.isRequired,
+      author: propTypes.string.isRequired,
+      author_email: propTypes.string.isRequired,
+      text: propTypes.string.isRequired,
+      abstract: propTypes.string.isRequired,
+      state: propTypes.string.isRequired,
+      editor_email: propTypes.string.isRequired,}).isRequired,
+  cancel: propTypes.func.isRequired,
+  fetchManus: propTypes.func.isRequired,
+  setError: propTypes.func.isRequired,
+};
+
 function Dashboard() {
   const [error, setError] = useState('');
   const [manuscripts, setManus] = useState([]);
   const [deleteMessage, setDeleteMessage] = useState('');
   const [updatingManus, setUpdatingManus] = useState(null);
+  const [sendingAction, setSendingAction] = useState(null);
 
 
   useEffect(() => {
@@ -163,6 +249,7 @@ return (
      {error && <ErrorMessage message={error} />}
       {manuscripts.map((manuscript) => {
   const isUpdating = updatingManus && updatingManus.title === manuscript.title;
+  const isSendingAction = sendingAction && sendingAction.title === manuscript.title;
 
   return (
     <div key={manuscript.title} className="manuscript-container">
@@ -175,6 +262,7 @@ return (
            <p>Text: {manuscript.text}</p>
            <p>Abstract: {manuscript.abstract}</p>
            <p>Editor Email: {manuscript.editor_email}</p>
+           <p>State: {manuscript.state}</p>
            <p>Referees: {manuscript.referee}</p>
            </div>
 
@@ -182,6 +270,27 @@ return (
           visible={true}
           manuscript={updatingManus}
           cancel={() => setUpdatingManus(null)}
+          fetchManus={fetchManus}
+          setError={setError}
+        />
+        </>
+      ) : isSendingAction ? (
+        <>
+          <div key={manuscript.title} className="manuscript-container">
+           <h2>Title: {manuscript.title}</h2>
+           <p>Author: {manuscript.author}</p>
+           <p>Author Email: {manuscript.author_email}</p>
+           <p>Text: {manuscript.text}</p>
+           <p>Abstract: {manuscript.abstract}</p>
+           <p>Editor Email: {manuscript.editor_email}</p>
+           <p>State: {manuscript.state}</p>
+           <p>Referees: {manuscript.referee}</p>
+           </div>
+
+        <SendActionForm
+          visible={true}
+          manuscript={sendingAction}
+          cancel={() => setSendingAction(null)}
           fetchManus={fetchManus}
           setError={setError}
         />
@@ -194,8 +303,10 @@ return (
           <p>Text: {manuscript.text}</p>
           <p>Abstract: {manuscript.abstract}</p>
           <p>Editor Email: {manuscript.editor_email}</p>
+          <p>State: {manuscript.state}</p>
           <p>Referees: {manuscript.referee}</p>
           <button onClick={() => setUpdatingManus(manuscript)}>Update</button>
+          <button onClick={() => setSendingAction(manuscript)}>Send Action</button>
           <button onClick={() => deleteManus(manuscript.title)}>Delete</button>
         </>
       )}
