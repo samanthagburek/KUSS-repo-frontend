@@ -263,7 +263,7 @@ function Text() {
           <h2>Title: {text.title}</h2>
           <p>Text: {text.text}</p>
           <button onClick={() => setUpdating(text)}>Update</button>
-          <button className="delete-button" onClick={() => deleteText(text.key, text.title)}>Delete</button>
+          <button onClick={() => deleteText(text.key, text.title)}>Delete</button>
         </>
       )}
     </div>
