@@ -121,6 +121,7 @@ function SendActionForm({ visible, manuscript, cancel, fetchManus, setError }) {
   const [updateMessage, setUpdateMessage] = useState('');
 
   const [action, SetAction] = useState('');
+  const [ref, SetRef] = useState('');
   const [actionOptions, setActionOptions] = useState('');
 
   const changeAction = (event) => { SetAction(event.target.value); };
@@ -145,7 +146,7 @@ useEffect(() => {
       title: manuscript.title,
       curr_state: manuscript.state,
       action: action,
-      referee: "placeholder" //this should change
+      referee: ref //this should change
     };
     
     axios.put(MANUSCRIPTS_RECEIVE_ACTION_ENDPOINT, actionForm)
@@ -174,6 +175,13 @@ if (!visible) return null;
             ))
           }
         </select> <br></br><br></br>
+        {(action === 'ARF' || action === 'DRF') && (
+          <div>
+          <label htmlFor="author">Enter Referee Email</label>
+          <input type="text" placeholder="" id="ref" value={ref} onChange={SetRef} />
+          </div>
+        )}
+
         <button type="button" onClick={cancel}>Cancel</button>
         <button type="submit" onClick={updateManuscript}>Update</button>
       </form>
