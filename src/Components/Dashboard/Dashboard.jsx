@@ -143,7 +143,7 @@ useEffect(() => {
     event.preventDefault();
 
     const actionForm = {
-      title: manuscript.title,
+      _id: manuscript._id,
       curr_state: manuscript.state,
       action: action,
       referee: ref //this should change
@@ -158,7 +158,7 @@ useEffect(() => {
           fetchManus();
         }, 2000);
       })
-      .catch((error) => setError(`Error updating "${manuscript.title}""${manuscript.state}""${action}" manuscript: ${error.message}`));
+      .catch((error) => setError(`Error updating "${manuscript._id}""${actionForm.curr_state}""${action}" manuscript: ${error.message}`));
   };
 if (!visible) return null;
  return (
@@ -191,6 +191,7 @@ if (!visible) return null;
 SendActionForm.propTypes = {
   visible: propTypes.bool.isRequired,
   manuscript: propTypes.shape({
+      _id: propTypes.string.isRequired,
       title: propTypes.string.isRequired,
       author: propTypes.string.isRequired,
       author_email: propTypes.string.isRequired,
@@ -259,13 +260,13 @@ return (
      {error && <ErrorMessage message={error} />}
       {manuscripts.map((manuscript) => {
   const isUpdating = updatingManus && updatingManus.title === manuscript.title;
-  const isSendingAction = sendingAction && sendingAction.title === manuscript.title;
+  const isSendingAction = sendingAction && sendingAction._id === manuscript._id;
 
   return (
-    <div key={manuscript.title} className="manuscript-container">
+    <div key={manuscript._id} className="manuscript-container">
       {isUpdating ? (
         <>
-          <div key={manuscript.title} className="manuscript-container">
+          <div key={manuscript._id} className="manuscript-container">
            <h2>Title: {manuscript.title}</h2>
            <p>Author: {manuscript.author}</p>
            <p>Author Email: {manuscript.author_email}</p>
@@ -286,7 +287,7 @@ return (
         </>
       ) : isSendingAction ? (
         <>
-          <div key={manuscript.title} className="manuscript-container">
+          <div key={manuscript._id} className="manuscript-container">
            <h2>Title: {manuscript.title}</h2>
            <p>Author: {manuscript.author}</p>
            <p>Author Email: {manuscript.author_email}</p>
