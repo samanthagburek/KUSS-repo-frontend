@@ -4,8 +4,11 @@ import axios from 'axios';
 import { BACKEND_URL } from '../../constants';
 import './Dashboard.css';
 const MANUSCRIPTS_ENDPOINT = `${BACKEND_URL}/manuscripts`;
-const MANUSCRIPTS_ACTIONS_ENDPOINT = `${BACKEND_URL}/manuscripts/actions`;
+// const MANUSCRIPTS_ACTIONS_ENDPOINT = `${BACKEND_URL}/manuscripts/actions`;
 const MANUSCRIPTS_RECEIVE_ACTION_ENDPOINT = `${BACKEND_URL}/manuscripts/receive_action`;
+const VALID_ACTIONS_BY_STATE_ENDPOINT = `${MANUSCRIPTS_ENDPOINT}/valid_actions`;
+const MANUSCRIPTS_STATES_ENDPOINT = `${BACKEND_URL}/manuscripts/states`;
+
 
 function ErrorMessage({ message }) {
     return (
@@ -122,7 +125,7 @@ function SendActionForm({ visible, manuscript, cancel, fetchManus, setError }) {
 
   const [action, SetAction] = useState('');
   const [ref, SetRef] = useState('');
-  const [actionOptions, setActionOptions] = useState('');
+  const [actionOptions, setActionOptions] = useState([]);
 
   const changeAction = (event) => { SetAction(event.target.value); };
 
@@ -132,12 +135,25 @@ useEffect(() => {
     }
   }, [manuscript]);
 
-  const getActions = () => {
-    axios.get(MANUSCRIPTS_ACTIONS_ENDPOINT)
-      .then(({ data }) => {setActionOptions(data)})
-      .catch((error) => { setError(`There was a problem getting roles. ${error}`); });
-  }
-  useEffect(getActions, []);
+  // const getActions = () => {
+  //   axios.get(MANUSCRIPTS_ACTIONS_ENDPOINT)
+  //     .then(({ data }) => {setActionOptions(data)})
+  //     .catch((error) => { setError(`There was a problem getting roles. ${error}`); });
+  // }
+  // useEffect(getActions, []);
+
+const getActions = () => {
+  if (!manuscript || !manuscript.state) return;
+
+  axios.post(VALID_ACTIONS_BY_STATE_ENDPOINT, { state: manuscript.state })
+    .then(({ data }) => {
+      setActionOptions(data.actions);
+    })
+    .catch((error) => {
+      setError(`There was a problem getting actions for state ${manuscript.state}. ${error.message}`);
+    });
+};
+useEffect(getActions, []);
 
   const updateManuscript = (event) => {
     event.preventDefault();
@@ -167,13 +183,19 @@ if (!visible) return null;
       <form className="dashboard-container">
       <p>Select an action to send</p>
         <select name='sendAction' onChange={changeAction}>
-          {
+          {/* {
             Object.keys(actionOptions).map((code)=>(
               <option key={code} value={code}>
                 {actionOptions[code]}
               </option>
             ))
-          }
+          } */}
+           <option value="">Select an action</option>
+            {Object.entries(actionOptions).map(([code, label]) => (
+            <option key={code} value={code}>
+            {label}
+            </option>
+  ))}
         </select> <br></br><br></br>
         {(action === 'ARF' || action === 'DRF') && (
           <div>
@@ -210,6 +232,7 @@ function Dashboard() {
   const [deleteMessage, setDeleteMessage] = useState('');
   const [updatingManus, setUpdatingManus] = useState(null);
   const [sendingAction, setSendingAction] = useState(null);
+  const [stateLabels, setStateLabels] = useState({});
 
 
   useEffect(() => {
@@ -225,6 +248,13 @@ function Dashboard() {
       return () => clearTimeout(timer);
     }
   }, [deleteMessage])
+
+
+  useEffect(() => {
+    axios.get(`${MANUSCRIPTS_STATES_ENDPOINT}`)
+      .then(({ data }) => setStateLabels(data))
+      .catch((error) => setError(`Error loading all action labels: ${error.message}`));
+  }, []);
 
 const fetchManus = () => {
     axios.get(MANUSCRIPTS_ENDPOINT)
@@ -243,6 +273,10 @@ const deleteManus = (_id, title) => {
       })
       .catch((error) => setError(`Error deleting manuscript: ${error.message}`));
   };
+
+  
+
+
 
 useEffect(fetchManus, []);
 
@@ -273,7 +307,7 @@ return (
            <p>Text: {manuscript.text}</p>
            <p>Abstract: {manuscript.abstract}</p>
            <p>Editor Email: {manuscript.editor_email}</p>
-           <p>State: {manuscript.state}</p>
+           <p>State: {stateLabels[manuscript.state]}</p>
            <p>Referees: {manuscript.referee}</p>
            </div>
 
@@ -294,7 +328,7 @@ return (
            <p>Text: {manuscript.text}</p>
            <p>Abstract: {manuscript.abstract}</p>
            <p>Editor Email: {manuscript.editor_email}</p>
-           <p>State: {manuscript.state}</p>
+           <p>State: {stateLabels[manuscript.state]}</p>
            <p>Referees: {manuscript.referee}</p>
            </div>
 
@@ -314,7 +348,7 @@ return (
           <p>Text: {manuscript.text}</p>
           <p>Abstract: {manuscript.abstract}</p>
           <p>Editor Email: {manuscript.editor_email}</p>
-          <p>State: {manuscript.state}</p>
+          <p> State: {stateLabels[manuscript.state]}</p>
           <p>Referees: {manuscript.referee}</p>
           <button onClick={() => setUpdatingManus(manuscript)}>Update</button>
           <button onClick={() => setSendingAction(manuscript)}>Send Action</button>
