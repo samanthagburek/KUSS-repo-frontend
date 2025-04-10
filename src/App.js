@@ -10,7 +10,7 @@ import './App.css';
 
 import Navbar from './Components/Navbar';
 import People from './Components/People';
-import Text from './Components/Text';
+//import Text from './Components/Text';
 import Masthead from './Components/Masthead';
 import Submission from './Components/Submission';
 import Home from './Components/Home';
@@ -28,7 +28,6 @@ function App() {
       <Routes>
         <Route index element={<Home/>}/>
         <Route path="people" element={<People />} />
-        <Route path="text" element={<Text />} />
         <Route path="masthead" element={<Masthead />} />
         <Route path="submission" element={<Submission />} />
         <Route path="dashboard" element={<Dashboard />} />
