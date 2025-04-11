@@ -128,6 +128,7 @@ function SendActionForm({ visible, manuscript, cancel, fetchManus, setError }) {
   const [actionOptions, setActionOptions] = useState([]);
 
   const changeAction = (event) => { SetAction(event.target.value); };
+  const changeRef = (event) => {SetRef(event.target.value);}
 
 useEffect(() => {
    if (manuscript) {
@@ -200,7 +201,7 @@ if (!visible) return null;
         {(action === 'ARF' || action === 'DRF') && (
           <div>
           <label htmlFor="author">Enter Referee Email</label>
-          <input type="text" placeholder="" id="ref" value={ref} onChange={SetRef} />
+          <input type="text" id="ref" value={ref} onChange={changeRef} />
           </div>
         )}
 
@@ -349,7 +350,7 @@ return (
           <p>Abstract: {manuscript.abstract}</p>
           <p>Editor Email: {manuscript.editor_email}</p>
           <p> State: {stateLabels[manuscript.state]}</p>
-          <p>Referees: {manuscript.referee}</p>
+          <p>Referees: {manuscript.refString}</p>
           <button onClick={() => setUpdatingManus(manuscript)}>Update</button>
           <button onClick={() => setSendingAction(manuscript)}>Send Action</button>
           <button onClick={() => deleteManus(manuscript._id, manuscript.title)}>Delete</button>
