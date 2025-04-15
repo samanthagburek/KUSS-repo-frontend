@@ -142,8 +142,10 @@ function Submission() {
     const [error, setError] = useState('');
     const [addingManus, setAddingManus] = useState(false);
     const [subguideText, setsubguideText] = useState('');
+    const [subguideTitle, setsubguideTitle] =  useState('');
     const [hasReadGuidelines, setHasReadGuidelines] = useState(false);
-
+    const [isEditingGuide, setIsEditingGuide] = useState(false);
+    const [successMessage, setSuccessMessage] = useState('');
 
     useEffect(() => {
         if (error) {
@@ -158,6 +160,7 @@ function Submission() {
                 const subguide = Object.values(data).find(text => text.key === "submission_guidelines");
                 if (subguide) {
                     setsubguideText(subguide.text);
+                    setsubguideTitle(subguide.title);
                 }
             })
             .catch(error => setError(`Error fetching submission guidelines: ${error}`));
@@ -170,6 +173,21 @@ function Submission() {
         .catch((error) => setError(`There was a problem retrieving manuscripts. ${error.message}`));
     };
 
+    const updateSubmissionGuidelines = () => {
+    const updatedText = {
+        key: "submission_guidelines",
+        title: subguideTitle,
+        text: subguideText,
+    };
+
+    axios.patch(TEXT_READ_ENDPOINT, updatedText)
+        .then(() => {
+            setIsEditingGuide(false);
+            setSuccessMessage(`${subguideTitle} updated!`);
+            setTimeout(() => setSuccessMessage(''), 3000);
+        })
+        .catch(error => setError(`Error updating submission guidelines: ${error.message}`));
+}
 
     useEffect(fetchManus, []);
 
@@ -177,10 +195,29 @@ function Submission() {
         <>
     <div className="subguide-container">
     <h2 className="guidelines-title">Submission Guidelines</h2>
-    <p> {subguideText}</p>
-    </div>
-    {error && <div style={{ color: 'red', marginTop: '10px' }}>{error}</div>}
+    
+    {isEditingGuide ? (
+        <textarea
+            value={subguideText}
+            onChange={(e) => setsubguideText(e.target.value)}
+            rows={6}
+            style={{ width: '100%', padding: '10px', fontSize: '16px', marginBottom: '10px' }}
+        />
+    ) : (
+        <p>{subguideText}</p>
+    )}
 
+    <button onClick={isEditingGuide ? updateSubmissionGuidelines : () => setIsEditingGuide(true)}>
+        {isEditingGuide ? 'Save' : 'Edit'}
+    </button>
+</div>
+
+    {error && <div style={{ color: 'red', marginTop: '10px' }}>{error}</div>}
+    {successMessage && (
+    <div className="popup-message">
+        {successMessage}
+    </div>
+)}
     <div className="checkbox-wrapper">
         <input
             type="checkbox"
