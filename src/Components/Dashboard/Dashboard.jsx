@@ -259,7 +259,10 @@ function Dashboard() {
 
 const fetchManus = () => {
     axios.get(MANUSCRIPTS_ENDPOINT)
-      .then(({ data }) => setManus(Object.values(data)))
+      .then(({ data }) => {
+        console.log("Fetched manuscripts:", data);
+        setManus(Object.values(data));
+      })
       .catch((error) => setError(`There was a problem retrieving manuscripts. ${error.message}`));
   };
 
