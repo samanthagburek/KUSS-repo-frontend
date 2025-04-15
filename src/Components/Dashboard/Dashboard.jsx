@@ -259,7 +259,10 @@ function Dashboard() {
 
 const fetchManus = () => {
     axios.get(MANUSCRIPTS_ENDPOINT)
-      .then(({ data }) => setManus(Object.values(data)))
+      .then(({ data }) => {
+        console.log("Fetched manuscripts:", data);
+        setManus(Object.values(data));
+      })
       .catch((error) => setError(`There was a problem retrieving manuscripts. ${error.message}`));
   };
 
@@ -309,7 +312,7 @@ return (
            <p>Abstract: {manuscript.abstract}</p>
            <p>Editor Email: {manuscript.editor_email}</p>
            <p>State: {stateLabels[manuscript.state]}</p>
-           <p>Referees: {manuscript.referee}</p>
+           <p>Referees: {Object.keys(manuscript.referees || {}).join(', ')}</p>
            </div>
 
         <UpdateManuscriptForm
@@ -350,7 +353,7 @@ return (
           <p>Abstract: {manuscript.abstract}</p>
           <p>Editor Email: {manuscript.editor_email}</p>
           <p> State: {stateLabels[manuscript.state]}</p>
-          <p>Referees: {manuscript.refString}</p>
+          <p>Referees: {Object.keys(manuscript.referees || {}).join(', ')}</p>
           <button onClick={() => setUpdatingManus(manuscript)}>Update</button>
           <button onClick={() => setSendingAction(manuscript)}>Send Action</button>
           <button onClick={() => deleteManus(manuscript._id, manuscript.title)}>Delete</button>
