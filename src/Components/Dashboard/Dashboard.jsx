@@ -296,7 +296,7 @@ return (
       )}
 
      {error && <ErrorMessage message={error} />}
-      {manuscripts.filter((manuscript) => manuscript.state != 'WIT').map((manuscript) => {
+      {manuscripts.filter((manuscript) => !['WIT', 'REJ', 'PUB'].includes(manuscript.state)).map((manuscript) => {
   const isUpdating = updatingManus && updatingManus.title === manuscript.title;
   const isSendingAction = sendingAction && sendingAction._id === manuscript._id;
 
