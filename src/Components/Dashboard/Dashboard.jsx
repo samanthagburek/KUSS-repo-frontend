@@ -293,7 +293,7 @@ return (
       )}
 
      {error && <ErrorMessage message={error} />}
-      {manuscripts.map((manuscript) => {
+      {manuscripts.filter((manuscript) => manuscript.state != 'WIT').map((manuscript) => {
   const isUpdating = updatingManus && updatingManus.title === manuscript.title;
   const isSendingAction = sendingAction && sendingAction._id === manuscript._id;
 
@@ -309,7 +309,18 @@ return (
            <p>Abstract: {manuscript.abstract}</p>
            <p>Editor Email: {manuscript.editor_email}</p>
            <p>State: {stateLabels[manuscript.state]}</p>
-           <p>Referees: {manuscript.referee}</p>
+           <p>
+              Referees:{' '}
+              {manuscript.referees && Object.keys(manuscript.referees).length > 0
+                ? Object.keys(manuscript.referees)
+                    .map((email, index, arr) => (
+                      <span key={email}>
+                        <a href={`mailto:${email}`}>{email}</a>
+                        {index < arr.length - 1 ? ', ' : ''}
+                      </span>
+                    ))
+                : 'None'}
+            </p>
            </div>
 
         <UpdateManuscriptForm
@@ -330,7 +341,18 @@ return (
            <p>Abstract: {manuscript.abstract}</p>
            <p>Editor Email: {manuscript.editor_email}</p>
            <p>State: {stateLabels[manuscript.state]}</p>
-           <p>Referees: {manuscript.referee}</p>
+           <p>
+              Referees:{' '}
+              {manuscript.referees && Object.keys(manuscript.referees).length > 0
+                ? Object.keys(manuscript.referees)
+                    .map((email, index, arr) => (
+                      <span key={email}>
+                        <a href={`mailto:${email}`}>{email}</a>
+                        {index < arr.length - 1 ? ', ' : ''}
+                      </span>
+                    ))
+                : 'None'}
+            </p>
            </div>
 
         <SendActionForm
@@ -350,7 +372,18 @@ return (
           <p>Abstract: {manuscript.abstract}</p>
           <p>Editor Email: {manuscript.editor_email}</p>
           <p> State: {stateLabels[manuscript.state]}</p>
-          <p>Referees: {manuscript.refString}</p>
+          <p>
+            Referees:{' '}
+            {manuscript.referees && Object.keys(manuscript.referees).length > 0
+              ? Object.keys(manuscript.referees)
+                  .map((email, index, arr) => (
+                    <span key={email}>
+                      <a href={`mailto:${email}`}>{email}</a>
+                      {index < arr.length - 1 ? ', ' : ''}
+                    </span>
+                  ))
+              : 'None'}
+          </p>
           <button onClick={() => setUpdatingManus(manuscript)}>Update</button>
           <button onClick={() => setSendingAction(manuscript)}>Send Action</button>
           <button onClick={() => deleteManus(manuscript._id, manuscript.title)}>Delete</button>
