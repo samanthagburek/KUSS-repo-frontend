@@ -4,6 +4,8 @@ import axios from 'axios';
 //import { Link } from 'react-router-dom';
  
 import { BACKEND_URL } from '../../constants';
+import './Masthead.css';
+
 
 const MASTHEAD_ENDPOINT = `${BACKEND_URL}/people/masthead`;
 
@@ -74,18 +76,21 @@ function Masthead() {
     return (
         <div className="wrapper">
             <header>
-                <h1>
-                    Masthead
-                </h1>
-            </header>
-            {error && <ErrorMessage message={error} />}
-            {masthead.map((person) => (
-                <Person 
-                    key={person.role} 
-                    person={person} 
-                    fetchMasthead={fetchMasthead} 
-                />
-            ))}
+                    <h1>
+                        Masthead
+                    </h1>
+                </header>
+            <div className="masthead-container">
+                
+                {error && <ErrorMessage message={error} />}
+                {masthead.map((person) => (
+                    <Person 
+                        key={person.role} 
+                        person={person} 
+                        fetchMasthead={fetchMasthead} 
+                    />
+                ))}
+            </div>
         </div>
     );
 }

@@ -96,9 +96,10 @@ function AddPersonForm({
         {
           Object.keys(roleOptions).map((code)=>(
             <div key={code}>
-              <label htmlFor={code}>{roleOptions[code]}</label><br></br>
-              <input type="checkbox" id={code} value={code} onChange={changeRoles}/>
-              
+              <label>
+                <input type="checkbox" id={code} value={code} onChange={changeRoles}/>
+                {roleOptions[code]}
+              </label>
             </div>
           ))
         }
@@ -205,10 +206,9 @@ function UpdatePersonForm({
         <div className="roles-container">
           {
             Object.keys(roleOptions).map((code)=>(
-              <div key={code}>
-                <label htmlFor={code}>{roleOptions[code]}</label><br></br>
+              <div key={code} className="role">  
                 <input type="checkbox" id={code} value={code} onChange={changeRoles} defaultChecked={roles.includes(code)} />
-                
+                <p>{roleOptions[code]}</p>
               </div>
             ))
           }
@@ -282,14 +282,16 @@ function Person({ person, fetchPeople }) {
           <p>{rolesString} at {affiliation}</p>
           <br></br>
           <p> Contact: {email} </p>
-        </div>
-        <UpdatePersonForm
+          <br></br>
+          <UpdatePersonForm
           visible={true}
           person={person}
           cancel={() => setUpdating(false)}
           fetchPeople={fetchPeople}
           setError={() => {}}
         />
+        </div>
+        
       </>
     ) : (
       <>
@@ -298,10 +300,13 @@ function Person({ person, fetchPeople }) {
           <p>{rolesString} at {affiliation}</p>
           <br></br>
           <p>Contact: <a href={`mailto:${email}`}>{email}</a></p>
-          
+          <br></br>
+          <div className="grid-container">
+            <button onClick={() => setUpdating(true)}>Update</button>
+            <button className="delete-button" onClick={deletePerson}>Delete</button>
+          </div>
         </div>
-        <button onClick={() => setUpdating(true)}>Update</button>
-        <button className="delete-button" onClick={deletePerson}>Delete person</button>
+        
         {delMsg && <div className="delete-popup">{delMsg}</div>}
       </>
     )}
