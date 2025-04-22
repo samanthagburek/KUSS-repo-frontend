@@ -258,7 +258,10 @@ function DisplayManuscriptDetails({ manuscript, stateLabels }) {
       <h2>Title: {manuscript.title}</h2>
       <p>Author: {manuscript.author}</p>
       <p>Author Email: {manuscript.author_email}</p>
-      <p>Text: {manuscript.text}</p>
+      <p>
+        Text:
+        <div style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>{manuscript.text}</div>
+      </p>
       <p>Abstract: {manuscript.abstract}</p>
       <p>Editor Email: {manuscript.editor_email}</p>
       <p>State: {stateLabels[manuscript.state]}</p>
@@ -290,6 +293,7 @@ function Dashboard() {
   const [sendingAction, setSendingAction] = useState(null);
   const [stateLabels, setStateLabels] = useState({});
   const [orderedStates, setOrderedStates] = useState([]);
+  const [collapsedStates, setCollapsedStates] = useState({});
 
 
   useEffect(() => {
@@ -339,6 +343,13 @@ const deleteManus = (_id, title) => {
 
 useEffect(fetchManus, []);
 
+const toggleCollapse = (stateCode) => {
+  setCollapsedStates((prev) => ({
+    ...prev,
+    [stateCode]: !prev[stateCode],
+  }));
+};
+
 return (
     <div className="wrapper">
       <header>
@@ -361,8 +372,14 @@ return (
 
         return (
           <div key={stateCode}>
-            <h2 className="state-header">{stateLabels[stateCode]}</h2>
-            {stateManuscripts.map((manuscript) => {
+            <div className="state-header">
+              <h2>{stateLabels[stateCode]}</h2>
+              <button onClick={() => toggleCollapse(stateCode)}>
+                {collapsedStates[stateCode] ? '↓' : '↑'}
+              </button>
+            </div>
+            
+            {!collapsedStates[stateCode] && stateManuscripts.map((manuscript) => {
               const isUpdating = updatingManus && updatingManus._id === manuscript._id;
               const isSendingAction = sendingAction && sendingAction._id === manuscript._id;
 
