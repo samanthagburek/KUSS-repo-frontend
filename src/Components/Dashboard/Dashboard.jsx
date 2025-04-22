@@ -130,8 +130,13 @@ function SendActionForm({ visible, manuscript, cancel, fetchManus, setError }) {
   const [newState, setNewState] = useState('');
   const [stateOptions, setStateOptions] = useState({});
 
+  const [report, setReport] = useState('');
+  const [verdict, setVerdict] = useState('');
+  const [verdictOptions, setVerdictOptions] = useState({});
+
   const changeAction = (event) => { SetAction(event.target.value); };
   const changeRef = (event) => {SetRef(event.target.value);}
+  
 
 useEffect(() => {
    if (manuscript) {
@@ -160,6 +165,12 @@ const getActions = () => {
 useEffect(getActions, []);
 
 useEffect(() => {
+  axios.get(`${MANUSCRIPTS_ENDPOINT}/verdicts`)
+    .then(({ data }) => setVerdictOptions(data))
+    .catch((error) => setError(`Error loading verdict options: ${error.message}`));
+}, []);
+
+useEffect(() => {
   axios.get(`${MANUSCRIPTS_STATES_ENDPOINT}`)
     .then(({data}) => setStateOptions(data))
     .catch((error) => setError(`Error loading states: ${error.message}`))
@@ -173,9 +184,12 @@ useEffect(() => {
       curr_state: manuscript.state,
       action: action,
       referee: ref, //this should change
-      new_state: newState
+      new_state: newState,
+      referee_report: report,
+      referee_verdict: verdict,
     };
-    
+
+    console.log("Submitting actionForm:", actionForm);
     axios.put(MANUSCRIPTS_RECEIVE_ACTION_ENDPOINT, actionForm)
       .then(() => {
         setUpdateMessage(`"${title}" updated successfully!`);
@@ -194,13 +208,6 @@ if (!visible) return null;
       <form className="dashboard-container">
       <p>Select an action to send</p>
         <select name='sendAction' onChange={changeAction}>
-          {/* {
-            Object.keys(actionOptions).map((code)=>(
-              <option key={code} value={code}>
-                {actionOptions[code]}
-              </option>
-            ))
-          } */}
            <option value="">Select an action</option>
             {Object.entries(actionOptions).map(([code, label]) => (
             <option key={code} value={code}>
@@ -208,12 +215,17 @@ if (!visible) return null;
             </option>
   ))}
         </select> <br></br><br></br>
-        {(action === 'ARF' || action === 'DRF') && (
-          <div>
-          <label htmlFor="author">Enter Referee Email</label>
-          <input type="text" id="ref" value={ref} onChange={changeRef} />
-          </div>
-        )}
+{['ARF', 'DRF', 'SUBREV', 'ACCWREV', 'ACC'].includes(action) && (
+  <div>
+    <label htmlFor="ref">Select Referee</label>
+    <select id="ref" value={ref} onChange={changeRef}>
+      <option value="">Select a referee</option>
+      {manuscript.referees && Object.keys(manuscript.referees).map((email) => (
+        <option key={email} value={email}>{email}</option>
+      ))}
+    </select>
+  </div>
+)}
 
         {action === 'EDMOV' && (
           <>
@@ -228,8 +240,31 @@ if (!visible) return null;
             </select> <br></br><br></br>
           </>
         )}
+        
+      {(action === 'SUBREV' || action === 'ACCWREV'|| action === 'ACC') && manuscript.state === 'REV' && (
+      <>
+      <label htmlFor="report">Referee Report</label>
+      <textarea
+        id="report"
+        value={report}
+        onChange={(e) => setReport(e.target.value)}
+      />
 
-
+      <label htmlFor="verdict">Referee Verdict</label>
+      <select
+        id="verdict"
+        value={verdict}
+        onChange={(e) => setVerdict(e.target.value)}
+      >
+      <option value="">Select a verdict</option>
+      {Object.entries(verdictOptions).map(([code, label]) => (
+        <option key={code} value={code}>{label}</option>
+      ))}
+    </select>
+  </>
+)}
+{/* />
+)} */}
         <button type="button" onClick={cancel}>Cancel</button>
         <button type="submit" onClick={updateManuscript}>Update</button>
       </form>
@@ -246,7 +281,14 @@ SendActionForm.propTypes = {
       text: propTypes.string.isRequired,
       abstract: propTypes.string.isRequired,
       state: propTypes.string.isRequired,
-      editor_email: propTypes.string.isRequired,}).isRequired,
+      editor_email: propTypes.string.isRequired,
+      referees: propTypes.objectOf(
+      propTypes.shape({
+    referee_report: propTypes.string,
+    referee_verdict: propTypes.string,
+  })
+),}).isRequired,
+
   cancel: propTypes.func.isRequired,
   fetchManus: propTypes.func.isRequired,
   setError: propTypes.func.isRequired,
@@ -265,17 +307,26 @@ function DisplayManuscriptDetails({ manuscript, stateLabels }) {
       <p>Abstract: {manuscript.abstract}</p>
       <p>Editor Email: {manuscript.editor_email}</p>
       <p>State: {stateLabels[manuscript.state]}</p>
-      <p>
-        Referees:{' '}
-        {manuscript.referees && Object.keys(manuscript.referees).length > 0
-          ? Object.keys(manuscript.referees).map((email, index, arr) => (
-              <span key={email}>
-                <a href={`mailto:${email}`}>{email}</a>
-                {index < arr.length - 1 ? ', ' : ''}
-              </span>
-            ))
-          : 'None'}
-      </p>
+     <div>
+  <p><strong>Referees:</strong></p>
+  {manuscript.referees && Object.keys(manuscript.referees).length > 0 ? (
+    Object.entries(manuscript.referees).map(([email, data]) => (
+      <div key={email} style={{ marginBottom: '1rem', paddingLeft: '1rem' }}>
+        <p><a href={`mailto:${email}`}>{email}</a></p>
+        {data.referee_report && (
+          <p><strong>Report:</strong> {data.referee_report}</p>
+        )}
+        {data.referee_verdict && (
+          <p><strong>Verdict:</strong> {data.referee_verdict}</p>
+        )}
+      </div>
+    ))
+  ) : (
+    <p>None</p>
+  )}
+</div>
+
+      
     </>
   );
 }
