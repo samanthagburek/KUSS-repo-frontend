@@ -127,6 +127,9 @@ function SendActionForm({ visible, manuscript, cancel, fetchManus, setError }) {
   const [ref, SetRef] = useState('');
   const [actionOptions, setActionOptions] = useState([]);
 
+  const [newState, setNewState] = useState('');
+  const [stateOptions, setStateOptions] = useState({});
+
   const changeAction = (event) => { SetAction(event.target.value); };
   const changeRef = (event) => {SetRef(event.target.value);}
 
@@ -156,6 +159,12 @@ const getActions = () => {
 };
 useEffect(getActions, []);
 
+useEffect(() => {
+  axios.get(`${MANUSCRIPTS_STATES_ENDPOINT}`)
+    .then(({data}) => setStateOptions(data))
+    .catch((error) => setError(`Error loading states: ${error.message}`))
+}, []);
+
   const updateManuscript = (event) => {
     event.preventDefault();
 
@@ -163,7 +172,8 @@ useEffect(getActions, []);
       _id: manuscript._id,
       curr_state: manuscript.state,
       action: action,
-      referee: ref //this should change
+      referee: ref, //this should change
+      new_state: newState
     };
     
     axios.put(MANUSCRIPTS_RECEIVE_ACTION_ENDPOINT, actionForm)
@@ -204,6 +214,21 @@ if (!visible) return null;
           <input type="text" id="ref" value={ref} onChange={changeRef} />
           </div>
         )}
+
+        {action === 'EDMOV' && (
+          <>
+            <label htmlFor="newState">Select New State</label>
+            <select id="newState" value={newState} onChange={(e) => setNewState(e.target.value)}>
+              <option value="">Select a state</option>
+              {Object.entries(stateOptions)
+                .filter(([code]) => code != manuscript.state)
+                .map(([code, label]) => (
+                <option key={code} value={code}>{label}</option>
+              ))}
+            </select> <br></br><br></br>
+          </>
+        )}
+
 
         <button type="button" onClick={cancel}>Cancel</button>
         <button type="submit" onClick={updateManuscript}>Update</button>
