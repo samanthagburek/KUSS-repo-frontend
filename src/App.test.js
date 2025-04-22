@@ -14,10 +14,10 @@ describe('App', () => {
 it('switches to People view', async () => {
     render(<App />);
 
-    userEvent.click(screen.getByText('View All People'));
+    userEvent.click(screen.getByText('People'));
 
     expect(screen.getByRole('heading'))
-      .toHaveTextContent('View All People')
+      .toHaveTextContent('People')
   });
 
 })

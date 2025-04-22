@@ -259,8 +259,7 @@ function DisplayManuscriptDetails({ manuscript, stateLabels }) {
       <p>Author: {manuscript.author}</p>
       <p>Author Email: {manuscript.author_email}</p>
       <p>
-        Text:
-        <div style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>{manuscript.text}</div>
+        Text: {manuscript.text}
       </p>
       <p>Abstract: {manuscript.abstract}</p>
       <p>Editor Email: {manuscript.editor_email}</p>
