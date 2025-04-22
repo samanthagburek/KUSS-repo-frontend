@@ -252,6 +252,36 @@ SendActionForm.propTypes = {
   setError: propTypes.func.isRequired,
 };
 
+function DisplayManuscriptDetails({ manuscript, stateLabels }) {
+  return (
+    <>
+      <h2>Title: {manuscript.title}</h2>
+      <p>Author: {manuscript.author}</p>
+      <p>Author Email: {manuscript.author_email}</p>
+      <p>Text: {manuscript.text}</p>
+      <p>Abstract: {manuscript.abstract}</p>
+      <p>Editor Email: {manuscript.editor_email}</p>
+      <p>State: {stateLabels[manuscript.state]}</p>
+      <p>
+        Referees:{' '}
+        {manuscript.referees && Object.keys(manuscript.referees).length > 0
+          ? Object.keys(manuscript.referees).map((email, index, arr) => (
+              <span key={email}>
+                <a href={`mailto:${email}`}>{email}</a>
+                {index < arr.length - 1 ? ', ' : ''}
+              </span>
+            ))
+          : 'None'}
+      </p>
+    </>
+  );
+}
+
+DisplayManuscriptDetails.propTypes = {
+  manuscript: propTypes.object.isRequired,
+  stateLabels: propTypes.object.isRequired,
+};
+
 function Dashboard() {
   const [error, setError] = useState('');
   const [manuscripts, setManus] = useState([]);
@@ -259,6 +289,7 @@ function Dashboard() {
   const [updatingManus, setUpdatingManus] = useState(null);
   const [sendingAction, setSendingAction] = useState(null);
   const [stateLabels, setStateLabels] = useState({});
+  const [orderedStates, setOrderedStates] = useState([]);
 
 
   useEffect(() => {
@@ -278,8 +309,11 @@ function Dashboard() {
 
   useEffect(() => {
     axios.get(`${MANUSCRIPTS_STATES_ENDPOINT}`)
-      .then(({ data }) => setStateLabels(data))
-      .catch((error) => setError(`Error loading all action labels: ${error.message}`));
+      .then(({ data }) => {
+        setStateLabels(data);
+        setOrderedStates(Object.keys(data));
+      })
+      .catch((error) => setError(`Error loading all state labels: ${error.message}`));
   }, []);
 
 const fetchManus = () => {
@@ -303,10 +337,6 @@ const deleteManus = (_id, title) => {
       .catch((error) => setError(`Error deleting manuscript: ${error.message}`));
   };
 
-  
-
-
-
 useEffect(fetchManus, []);
 
 return (
@@ -321,109 +351,61 @@ return (
       )}
 
      {error && <ErrorMessage message={error} />}
-      {manuscripts.filter((manuscript) => !['WIT', 'REJ', 'PUB'].includes(manuscript.state)).map((manuscript) => {
-  const isUpdating = updatingManus && updatingManus.title === manuscript.title;
-  const isSendingAction = sendingAction && sendingAction._id === manuscript._id;
+     
+     {orderedStates.map((stateCode) => {
+        const stateManuscripts = manuscripts.filter(
+          (m) => m.state === stateCode && !['WIT', 'REJ', 'PUB'].includes(m.state)
+        );
 
-  return (
-    <div key={manuscript._id} className="manuscript-container">
-      {isUpdating ? (
-        <>
-          <div key={manuscript._id} className="manuscript-container">
-           <h2>Title: {manuscript.title}</h2>
-           <p>Author: {manuscript.author}</p>
-           <p>Author Email: {manuscript.author_email}</p>
-           <p>Text: {manuscript.text}</p>
-           <p>Abstract: {manuscript.abstract}</p>
-           <p>Editor Email: {manuscript.editor_email}</p>
-           <p>State: {stateLabels[manuscript.state]}</p>
-           <p>
-              Referees:{' '}
-              {manuscript.referees && Object.keys(manuscript.referees).length > 0
-                ? Object.keys(manuscript.referees)
-                    .map((email, index, arr) => (
-                      <span key={email}>
-                        <a href={`mailto:${email}`}>{email}</a>
-                        {index < arr.length - 1 ? ', ' : ''}
-                      </span>
-                    ))
-                : 'None'}
-            </p>
-           </div>
+        if (stateManuscripts.length === 0) return null;
 
-        <UpdateManuscriptForm
-          visible={true}
-          manuscript={updatingManus}
-          cancel={() => setUpdatingManus(null)}
-          fetchManus={fetchManus}
-          setError={setError}
-        />
-        </>
-      ) : isSendingAction ? (
-        <>
-          <div key={manuscript._id} className="manuscript-container">
-           <h2>Title: {manuscript.title}</h2>
-           <p>Author: {manuscript.author}</p>
-           <p>Author Email: {manuscript.author_email}</p>
-           <p>Text: {manuscript.text}</p>
-           <p>Abstract: {manuscript.abstract}</p>
-           <p>Editor Email: {manuscript.editor_email}</p>
-           <p>State: {stateLabels[manuscript.state]}</p>
-           <p>
-              Referees:{' '}
-              {manuscript.referees && Object.keys(manuscript.referees).length > 0
-                ? Object.keys(manuscript.referees)
-                    .map((email, index, arr) => (
-                      <span key={email}>
-                        <a href={`mailto:${email}`}>{email}</a>
-                        {index < arr.length - 1 ? ', ' : ''}
-                      </span>
-                    ))
-                : 'None'}
-            </p>
-           </div>
+        return (
+          <div key={stateCode}>
+            <h2 className="state-header">{stateLabels[stateCode]}</h2>
+            {stateManuscripts.map((manuscript) => {
+              const isUpdating = updatingManus && updatingManus._id === manuscript._id;
+              const isSendingAction = sendingAction && sendingAction._id === manuscript._id;
 
-        <SendActionForm
-          visible={true}
-          manuscript={sendingAction}
-          cancel={() => setSendingAction(null)}
-          fetchManus={fetchManus}
-          setError={setError}
-        />
-        </>
-      ) : (
-        <>
-          <h2>Title: {manuscript.title}</h2>
-          <p>Author: {manuscript.author}</p>
-          <p>Author Email: {manuscript.author_email}</p>
-          <p>Text: {manuscript.text}</p>
-          <p>Abstract: {manuscript.abstract}</p>
-          <p>Editor Email: {manuscript.editor_email}</p>
-          <p> State: {stateLabels[manuscript.state]}</p>
-          <p>
-            Referees:{' '}
-            {manuscript.referees && Object.keys(manuscript.referees).length > 0
-              ? Object.keys(manuscript.referees)
-                  .map((email, index, arr) => (
-                    <span key={email}>
-                      <a href={`mailto:${email}`}>{email}</a>
-                      {index < arr.length - 1 ? ', ' : ''}
-                    </span>
-                  ))
-              : 'None'}
-          </p>
-          <button onClick={() => setUpdatingManus(manuscript)}>Update</button>
-          <button onClick={() => setSendingAction(manuscript)}>Send Action</button>
-          <button onClick={() => deleteManus(manuscript._id, manuscript.title)}>Delete</button>
-        </>
-      )}
+              return (
+                <div key={manuscript._id} className="manuscript-container">
+                  {isUpdating ? (
+                    <>
+                      <DisplayManuscriptDetails manuscript={manuscript} stateLabels={stateLabels} />
+                      <UpdateManuscriptForm
+                        visible={true}
+                        manuscript={updatingManus}
+                        cancel={() => setUpdatingManus(null)}
+                        fetchManus={fetchManus}
+                        setError={setError}
+                      />
+                    </>
+                  ) : isSendingAction ? (
+                    <>
+                      <DisplayManuscriptDetails manuscript={manuscript} stateLabels={stateLabels} />
+                      <SendActionForm
+                        visible={true}
+                        manuscript={sendingAction}
+                        cancel={() => setSendingAction(null)}
+                        fetchManus={fetchManus}
+                        setError={setError}
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <DisplayManuscriptDetails manuscript={manuscript} stateLabels={stateLabels} />
+                      <button onClick={() => setUpdatingManus(manuscript)}>Update</button>
+                      <button onClick={() => setSendingAction(manuscript)}>Send Action</button>
+                      <button onClick={() => deleteManus(manuscript._id, manuscript.title)}>Delete</button>
+                    </>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        );
+      })}
     </div>
   );
-})}
-</div>
-  );
 }
-
-
 
 export default Dashboard;
