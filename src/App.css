@@ -64,24 +64,24 @@ form input {
 form label {
   margin-left: 1rem;
   display: block;
-  height: 0;
+  height: 10px;
   width: fit-content;
   position: relative;
+
   z-index: 1;
 }
-form label::before,
-form label::after {
-  content: '';
-  position: absolute;
-  height: 1.65rem;
-  top: -.25rem;
-  left: -5px;
-  width: calc(100% + 10px);
-  border: 2px solid var(--accent-color);
-  border-radius: 5px;
-  background-color: white;
-  z-index: -1;
-}
+    form label::before,
+    form label::after {
+        content: '';
+        position: absolute;
+        height: 2rem;
+        left: -5px;
+        width: calc(100% + 10px);
+        border: 2px solid var(--accent-color);
+        border-radius: 5px;
+        background-color: white;
+        z-index: -1;
+    }
 
 form button {
   margin-right: 1rem;

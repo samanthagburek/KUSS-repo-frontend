@@ -13,6 +13,7 @@ import People from './Components/People';
 //import Text from './Components/Text';
 import Masthead from './Components/Masthead';
 import Submission from './Components/Submission';
+import Register from './Components/Register';
 import Home from './Components/Home';
 import Dashboard from './Components/Dashboard';
 
@@ -31,6 +32,8 @@ function App() {
         <Route path="masthead" element={<Masthead />} />
         <Route path="submission" element={<Submission />} />
         <Route path="dashboard" element={<Dashboard />} />
+        <Route path="register" element={<Register />} />
+
 
       </Routes>
     </BrowserRouter>

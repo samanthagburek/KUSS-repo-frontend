@@ -91,19 +91,17 @@ function AddPersonForm({
       
       <label htmlFor="role">
         Roles
-      </label>
-      <div className="roles-container">
-        {
-          Object.keys(roleOptions).map((code)=>(
-            <div key={code}>
-              <label>
-                <input type="checkbox" id={code} value={code} onChange={changeRoles}/>
-                {roleOptions[code]}
-              </label>
-            </div>
-          ))
-        }
-      </div>
+        </label>
+        <div className="roles-container">
+          {
+            Object.keys(roleOptions).map((code)=>(
+              <div key={code} className="role">  
+                <input type="checkbox" id={code} value={code} onChange={changeRoles} defaultChecked={roles.includes(code)} />
+                <p>{roleOptions[code]}</p>
+              </div>
+            ))
+          }
+        </div>
       <button type="button" onClick={cancel}>Cancel</button>
       <button type="button" onClick={addPerson}>Submit</button>
     </form>
@@ -352,28 +350,30 @@ function People() {
 
   
   return (
-    <div className="wrapper">
+      <div className="wrapper">
+          <div className="person-container">
       <header>
         <h1>
           View All People
         </h1>
          {!addingPerson ? (
-    <button type="button" onClick={showAddPersonForm}>
-      Add a Person
-    </button>
-  ) : (
-    <h2 className="add-person-heading">Add a Person</h2> 
-  )}
-      </header>
-      <AddPersonForm
-        visible={addingPerson}
-        cancel={hideAddPersonForm}
-        fetchPeople={fetchPeople}
-        setError={setError}
-      />
-      {error && <ErrorMessage message={error} />}
-      {people.map((person) => <Person key={person.email} person={person} fetchPeople={fetchPeople} />)}
-    </div>
+        <button type="button" onClick={showAddPersonForm}>
+          Add a Person
+        </button>
+      ) : (
+        <h2 className="add-person-heading">Add a Person</h2> 
+      )}
+          </header>
+          <AddPersonForm
+            visible={addingPerson}
+            cancel={hideAddPersonForm}
+            fetchPeople={fetchPeople}
+            setError={setError}
+          />
+          {error && <ErrorMessage message={error} />}
+          {people.map((person) => <Person key={person.email} person={person} fetchPeople={fetchPeople} />)}
+           </div>
+      </div>
   );
 }
 
