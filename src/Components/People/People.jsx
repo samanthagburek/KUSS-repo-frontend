@@ -8,112 +8,10 @@ import './People.css';
 // import { use } from 'react';
 
 const PEOPLE_READ_ENDPOINT = `${BACKEND_URL}/people`;
-const PEOPLE_CREATE_ENDPOINT = `${BACKEND_URL}/people`;
+// const PEOPLE_CREATE_ENDPOINT = `${BACKEND_URL}/people`;
 const PEOPLE_UPDATE_ENDPOINT = `${BACKEND_URL}/people`;
 const ROLES_ENDPOINT = `${BACKEND_URL}/roles`
 
-function AddPersonForm({
-  visible,
-  cancel,
-  fetchPeople,
-  setError,
-}) {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [affiliation, setAffiliation] = useState('');
-  const [roles, setRoles] = useState([]);
-  const [roleOptions, setRoleOptions] = useState('');
-  const [addMsg, setAddsMsg] = useState('');
-
-  const changeName = (event) => { setName(event.target.value); };
-  const changeEmail = (event) => { setEmail(event.target.value); };
-  const changeAffiliation = (event) => {setAffiliation(event.target.value); };
-  const changeRoles = (event) => {
-      if(roles.includes(event.target.value)) {
-        setRoles(
-          roles.filter(a =>
-            a !== event.target.value
-          )
-        );
-      } else {
-        setRoles([
-          ...roles,
-          event.target.value
-        ]);
-      }
-    }
-      
-  const addPerson = (event) => {
-    event.preventDefault();
-    const newPerson = {
-      name: name,
-      email: email,
-      roles: roles,
-      affiliation: affiliation,
-    }
-    axios.put(PEOPLE_CREATE_ENDPOINT, newPerson)
-     .then(() => {
-        setAddsMsg(`${name} has been added successfully!`);
-        setTimeout(() => {
-          setAddsMsg('');
-          cancel();
-        }, 3000);
-        fetchPeople();
-      })
-      .catch((error) => {
-        setError(`There was a problem adding the person. ${error}`);
-      });
-  };
-  const getRoles = () => {
-    axios.get(ROLES_ENDPOINT)
-      .then(({ data }) => {setRoleOptions(data)})
-      .catch((error) => { setError(`There was a problem getting roles. ${error}`); });
-  }
-  useEffect(getRoles, []);
-
-  if (!visible) return null;
-  return (
-    <div>
-      {addMsg && <div className="add-popup">{addMsg}</div>}
-    <form>
-      <label htmlFor="name">
-        Name
-      </label>
-      <input required type="text" id="name" value={name} onChange={changeName} />
-      <label htmlFor="email">
-        Email
-      </label>
-      <input required type="text" id="email" onChange={changeEmail} />
-      <label htmlFor="affiliation">
-        Affiliation
-      </label>
-      <input required type="text" id="affiliation" onChange={changeAffiliation} />
-      
-      <label htmlFor="role">
-        Roles
-        </label>
-        <div className="roles-container">
-          {
-            Object.keys(roleOptions).map((code)=>(
-              <div key={code} className="role">  
-                <input type="checkbox" id={code} value={code} onChange={changeRoles} defaultChecked={roles.includes(code)} />
-                <p>{roleOptions[code]}</p>
-              </div>
-            ))
-          }
-        </div>
-      <button type="button" onClick={cancel}>Cancel</button>
-      <button type="button" onClick={addPerson}>Submit</button>
-    </form>
-    </div>
-  );
-}
-AddPersonForm.propTypes = {
-  visible: propTypes.bool.isRequired,
-  cancel: propTypes.func.isRequired,
-  fetchPeople: propTypes.func.isRequired,
-  setError: propTypes.func.isRequired,
-};
 
 function ErrorMessage({ message }) {
   return (
@@ -332,7 +230,7 @@ function peopleObjectToArray(Data) {
 function People() {
   const [error, setError] = useState('');
   const [people, setPeople] = useState([]);
-  const [addingPerson, setAddingPerson] = useState(false);
+  // const [addingPerson, setAddingPerson] = useState(false);
 
   const fetchPeople = () => {
     axios.get(PEOPLE_READ_ENDPOINT)
@@ -343,8 +241,8 @@ function People() {
       .catch((error) => setError(`There was a problem retrieving the list of people. ${error}`));
   };
 
-  const showAddPersonForm = () => { setAddingPerson(true); };
-  const hideAddPersonForm = () => { setAddingPerson(false); };
+  // const showAddPersonForm = () => { setAddingPerson(true); };
+  // const hideAddPersonForm = () => { setAddingPerson(false); };
 
   useEffect(fetchPeople, []);
 
@@ -356,20 +254,7 @@ function People() {
         <h1>
           View All People
         </h1>
-         {!addingPerson ? (
-        <button type="button" onClick={showAddPersonForm}>
-          Add a Person
-        </button>
-      ) : (
-        <h2 className="add-person-heading">Add a Person</h2> 
-      )}
-          </header>
-          <AddPersonForm
-            visible={addingPerson}
-            cancel={hideAddPersonForm}
-            fetchPeople={fetchPeople}
-            setError={setError}
-          />
+        </header>
           {error && <ErrorMessage message={error} />}
           {people.map((person) => <Person key={person.email} person={person} fetchPeople={fetchPeople} />)}
            </div>
