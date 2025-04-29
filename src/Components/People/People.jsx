@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import propTypes from 'prop-types';
 import axios from 'axios';
+import User from '../../User';
+
  
 import { BACKEND_URL } from '../../constants';
 
@@ -8,6 +10,7 @@ import './People.css';
 // import { use } from 'react';
 
 const PEOPLE_READ_ENDPOINT = `${BACKEND_URL}/people`;
+//const PERSON_ENDPOINT = `${BACKEND_URL}/people/<email>/<user_id>`;
 // const PEOPLE_CREATE_ENDPOINT = `${BACKEND_URL}/people`;
 const PEOPLE_UPDATE_ENDPOINT = `${BACKEND_URL}/people`;
 const ROLES_ENDPOINT = `${BACKEND_URL}/roles`
@@ -131,7 +134,7 @@ UpdatePersonForm.propTypes = {
 };
 
 
-function Person({ person, fetchPeople }) {
+function Person({ person, fetchPeople, setError }) {
   const { name, email, affiliation, roles } = person;
   const [delMsg, setdelMsg] = useState('');
   const [updating, setUpdating] = useState(false);
@@ -153,9 +156,11 @@ function Person({ person, fetchPeople }) {
   const deletePerson = () => {
     const confirmDelete = window.confirm(`Are you sure you want to delete ${name}?`);
     if (!confirmDelete) return; 
-    const delperson = { data: {email}}
+    //const delperson = { data: {email}}
+    const curr_user = User.getName();
+    var del_endpt = PEOPLE_READ_ENDPOINT + '/' + email + '/' + curr_user
    
-    axios.delete(PEOPLE_READ_ENDPOINT,delperson)
+    axios.delete(del_endpt)
       .then(() => {
         setdelMsg(`${name} deleted`);
         setTimeout(() => {
@@ -165,7 +170,10 @@ function Person({ person, fetchPeople }) {
       })
       .then(() => {
       fetchPeople();})
-      .catch(error => console.error("Error deleting person:", error));
+      .catch((error) => {
+        setError(`Error deleting person: ${error.message}`);
+        window.scrollTo({top: 0, behavior: 'smooth'});
+      });
   }
 
   return (
@@ -218,6 +226,7 @@ Person.propTypes = {
     roles: propTypes.string.isRequired,
   }).isRequired,
   fetchPeople: propTypes.func,
+  setError: propTypes.func.isRequired,
 
 };
 
@@ -256,7 +265,7 @@ function People() {
         </h1>
         </header>
           {error && <ErrorMessage message={error} />}
-          {people.map((person) => <Person key={person.email} person={person} fetchPeople={fetchPeople} />)}
+          {people.map((person) => <Person key={person.email} person={person} fetchPeople={fetchPeople} setError={setError} />)}
            </div>
       </div>
   );
