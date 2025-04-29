@@ -423,10 +423,7 @@ return (
         return (
           <div key={stateCode}>
             <div className="state-header">
-              <h2>{stateLabels[stateCode]}</h2>
-              <button onClick={() => toggleCollapse(stateCode)}>
-                {collapsedStates[stateCode] ? '↓' : '↑'}
-              </button>
+              <button onClick={() => toggleCollapse(stateCode)} className={collapsedStates[stateCode] ? "toggled": ""}>{stateLabels[stateCode]}</button>
             </div>
             
             {!collapsedStates[stateCode] && stateManuscripts.map((manuscript) => {
