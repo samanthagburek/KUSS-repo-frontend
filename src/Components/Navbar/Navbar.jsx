@@ -8,8 +8,6 @@ const PAGES = [
   { label: 'People', destination: '/people' },
   { label: 'Submission', destination: '/submission'},
   { label: 'Dashboard', destination: '/dashboard' },
-  { label: 'Login', destination: '/login' },
-  { label: 'Register', destination: '/register' },
   //{ label: 'Texts', destination: '/text'},
 
 ];

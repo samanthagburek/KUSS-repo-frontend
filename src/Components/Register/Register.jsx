@@ -4,6 +4,8 @@ import axios from 'axios';
 import { BACKEND_URL } from '../../constants';
 import './Register.css';
 const TEXT_READ_ENDPOINT = `${BACKEND_URL}/text`;
+import { useNavigate } from 'react-router-dom';
+
 
 
 const PEOPLE_CREATE_ENDPOINT = `${BACKEND_URL}/people`;
@@ -14,6 +16,7 @@ function AddPersonForm({
     cancel,
     setError,
 }) {
+    const navigate = useNavigate();
     const [name, setName] = useState('');
     const [password, setPassword] = useState('');
     const [email, setEmail] = useState('');
@@ -55,6 +58,7 @@ function AddPersonForm({
                 setAddsMsg(`${name} has been added successfully!`);
                 setTimeout(() => {
                     setAddsMsg('');
+                    navigate('/login');
                     cancel();
                 }, 3000);
             })
