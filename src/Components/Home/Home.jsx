@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
 import { BACKEND_URL } from '../../constants';
+import User from '../../User';
 
 import './Home.css';
 
@@ -14,6 +15,7 @@ const Home = () => {
     const [isEditing, setIsEditing] = useState(false);
     const [error, setError] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
+    const [username, setUsername] = useState(User.getName());
 
  useEffect(() => {
         axios.get(TEXT_READ_ENDPOINT)
@@ -46,6 +48,11 @@ const updateAboutUs = () => {
         .catch(error => setError(`Error updating about us: ${error}`));
      };
 
+    const LogIn = () => {
+        User.setName("dd");
+        setUsername(User.getName);
+    };
+
 
  return (
     <div className="journal-title">
@@ -69,6 +76,12 @@ const updateAboutUs = () => {
                 >
                 {isEditing ? 'Save' : 'Edit'}
             </button>
+            <button 
+                onClick={LogIn} 
+                >
+                {'Test'}
+            </button>
+            {username + " Name goes here"}
             {error && <div style={{ color: 'red', marginTop: '10px' }}>{error}</div>}
         </section>
 
