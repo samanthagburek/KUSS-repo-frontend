@@ -51,6 +51,8 @@ function LoginForm({
                 <input required type="text" id="password" onChange={changePassword} />
 
                 <button type="button" onClick={tryLogin}>Log In</button>
+                <button type="button" onClick={() => navigate('/register')}>Register</button>
+
             </form>
         </div>
     );

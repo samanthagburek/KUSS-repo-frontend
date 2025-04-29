@@ -64,15 +64,15 @@ const updateAboutUs = () => {
                 />
             ) : (
             <div className="about-container">
+            <p>{username != "" ? "Hello, " + username : "!"}</p>
             <p> {aboutText}</p>
-            </div>
-            )}
             <button 
                 onClick={isEditing ? updateAboutUs : () => setIsEditing(true)} 
                 >
                 {isEditing ? 'Save' : 'Edit'}
             </button>
-            {username != "" ? "Hello, " + username : ""}
+            </div>
+            )}
             {error && <div style={{ color: 'red', marginTop: '10px' }}>{error}</div>}
         </section>
 
