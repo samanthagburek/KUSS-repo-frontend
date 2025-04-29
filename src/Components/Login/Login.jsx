@@ -2,12 +2,12 @@ import React, { useEffect,useState } from 'react';
 import propTypes from 'prop-types';
 import axios from 'axios';
 import { BACKEND_URL } from '../../constants';
+import User from '../../User';
 import './Login.css';
 
-const PEOPLE_CREATE_ENDPOINT = `${BACKEND_URL}/people`;
+const PEOPLE_ENDPOINT = `${BACKEND_URL}/login`;
 
-function AddPersonForm({
-    cancel,
+function LoginForm({
     setError,
 }) {
     const [password, setPassword] = useState('');
@@ -17,22 +17,20 @@ function AddPersonForm({
     const changePassword = (event) => { setPassword(event.target.value); };
     const changeEmail = (event) => { setEmail(event.target.value); };
 
-    const addPerson = (event) => {
+    const tryLogin = (event) => {
         event.preventDefault();
-        const newPerson = {
-            email: email,
-            password: password,
-        }
-        axios.put(PEOPLE_CREATE_ENDPOINT, newPerson)
-            .then(() => {
-                setAddsMsg(`${name} has been added successfully!`);
+        var endpoint = PEOPLE_ENDPOINT + "/" + email + "/" + password
+        axios.get(endpoint)
+        
+            .then(({data}) => {
+                setAddsMsg(`${data["email"]} log in success!`);
+                User.setName(data["email"]);
                 setTimeout(() => {
                     setAddsMsg('');
-                    cancel();
                 }, 3000);
             })
-            .catch((error) => {
-                setError(`There was a problem adding the person. ${error}`);
+            .catch(() => {
+                setError(`User not found.`);
             });
     };
 
@@ -49,14 +47,13 @@ function AddPersonForm({
                 </label>
                 <input required type="text" id="password" onChange={changePassword} />
 
-                <button type="button" onClick={addPerson}>Log In</button>
+                <button type="button" onClick={tryLogin}>Log In</button>
             </form>
         </div>
     );
 }
 
-AddPersonForm.propTypes = {
-    cancel: propTypes.func.isRequired,
+LoginForm.propTypes = {
     setError: propTypes.func.isRequired,
 };
 
@@ -90,7 +87,7 @@ function Submission() {
     {error && <div style={{ color: 'red', marginTop: '10px' }}>{error}</div>}
     <div className="wrapper">
         
-        <AddPersonForm
+        <LoginForm
             setError={setError}
         />
     </div>

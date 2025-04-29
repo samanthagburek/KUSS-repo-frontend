@@ -15,9 +15,10 @@ const Home = () => {
     const [isEditing, setIsEditing] = useState(false);
     const [error, setError] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
-    const [username, setUsername] = useState(User.getName());
+    const [username, setUsername] = useState('');
 
  useEffect(() => {
+        setUsername(User.getName());
         axios.get(TEXT_READ_ENDPOINT)
             .then(({ data }) => {
                 const aboutUsEntry = Object.values(data).find(text => text.key === "about_us");
@@ -48,11 +49,6 @@ const updateAboutUs = () => {
         .catch(error => setError(`Error updating about us: ${error}`));
      };
 
-    const LogIn = () => {
-        User.setName("dd");
-        setUsername(User.getName);
-    };
-
 
  return (
     <div className="journal-title">
@@ -76,12 +72,7 @@ const updateAboutUs = () => {
                 >
                 {isEditing ? 'Save' : 'Edit'}
             </button>
-            <button 
-                onClick={LogIn} 
-                >
-                {'Test'}
-            </button>
-            {username + " Name goes here"}
+            {username != "" ? "Hello, " + username : ""}
             {error && <div style={{ color: 'red', marginTop: '10px' }}>{error}</div>}
         </section>
 

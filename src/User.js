@@ -1,14 +1,14 @@
 var User = (function() {
-    var name = "";
+    var _id = "";
     //var roles = [];
   
     var getName = function() {
-      name = getCookie("id");
-      return name;
+      _id = getCookie("id");
+      return _id;
     };
   
     var setName = function(thisName) {
-        name = thisName;     
+      _id = thisName;     
         document.cookie = "id="+thisName;
       // Also set this in cookie/localStorage
     };
