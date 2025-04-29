@@ -131,8 +131,8 @@ ErrorMessage.propTypes = {
 function Submission() {
     const [error, setError] = useState('');
     const [addingManus, setAddingManus] = useState(false);
-    const [subguideText, setsubguideText] = useState('');
-    const [subguideTitle, setsubguideTitle] =  useState('');
+    const [tosText, settosText] = useState('');
+    const [tosTitle, settosTitle] =  useState('');
     const [hasReadGuidelines, setHasReadGuidelines] = useState(false);
     const [isEditingGuide, setIsEditingGuide] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
@@ -147,10 +147,10 @@ function Submission() {
      useEffect(() => {
         axios.get(TEXT_READ_ENDPOINT)
             .then(({ data }) => {
-                const subguide = Object.values(data).find(text => text.key === "submission_guidelines");
-                if (subguide) {
-                    setsubguideText(subguide.text);
-                    setsubguideTitle(subguide.title);
+                const tos = Object.values(data).find(text => text.key === "terms_of_service");
+                if (tos) {
+                    settosText(tos.text);
+                    settosTitle(tos.title);
                 }
             })
             .catch(error => setError(`Error fetching submission guidelines: ${error}`));
@@ -159,15 +159,15 @@ function Submission() {
 
     const updateSubmissionGuidelines = () => {
     const updatedText = {
-        key: "submission_guidelines",
-        title: subguideTitle,
-        text: subguideText,
+        key: "terms_of_service",
+        title: tosTitle,
+        text: tosText,
     };
 
     axios.patch(TEXT_READ_ENDPOINT, updatedText)
         .then(() => {
             setIsEditingGuide(false);
-            setSuccessMessage(`${subguideTitle} updated!`);
+            setSuccessMessage(`${tosTitle} updated!`);
             setTimeout(() => setSuccessMessage(''), 3000);
         })
         .catch(error => setError(`Error updating submission guidelines: ${error.message}`));
@@ -176,18 +176,18 @@ function Submission() {
 
     return (
         <>
-    <div className="subguide-container">
-    <h2 className="guidelines-title">User TOS</h2>
+    <div className="tos-container">
+    <h2 className="guidelines-title">{tosTitle}</h2>
     
     {isEditingGuide ? (
         <textarea
-            value={subguideText}
-            onChange={(e) => setsubguideText(e.target.value)}
+            value={tosText}
+            onChange={(e) => settosText(e.target.value)}
             rows={6}
             style={{ width: '100%', padding: '10px', fontSize: '16px', marginBottom: '10px' }}
         />
     ) : (
-        <p>{subguideText}</p>
+        <p>{tosText}</p>
     )}
 
     <button onClick={isEditingGuide ? updateSubmissionGuidelines : () => setIsEditingGuide(true)}>
