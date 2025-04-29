@@ -1,4 +1,5 @@
 import React, { useEffect,useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import propTypes from 'prop-types';
 import axios from 'axios';
 import { BACKEND_URL } from '../../constants';
@@ -16,6 +17,7 @@ function LoginForm({
 
     const changePassword = (event) => { setPassword(event.target.value); };
     const changeEmail = (event) => { setEmail(event.target.value); };
+    const navigate = useNavigate();
 
     const tryLogin = (event) => {
         event.preventDefault();
@@ -27,6 +29,7 @@ function LoginForm({
                 User.setName(data["email"]);
                 setTimeout(() => {
                     setAddsMsg('');
+                    navigate('/');
                 }, 3000);
             })
             .catch(() => {
