@@ -215,7 +215,14 @@ if (!visible) return null;
             </option>
   ))}
         </select> <br></br><br></br>
-{['ARF', 'DRF', 'SUBREV', 'ACCWREV', 'ACC'].includes(action) && (
+        {(action === 'ARF')&& (
+        <div>
+        <label htmlFor="author">Enter Referee Email</label>
+        <input type="text" id="ref" value={ref} onChange={changeRef} />
+        </div>
+      )}
+
+{['DRF', 'SUBREV'].includes(action) && (
   <div>
     <label htmlFor="ref">Select Referee</label>
     <select id="ref" value={ref} onChange={changeRef}>
@@ -241,7 +248,7 @@ if (!visible) return null;
           </>
         )}
         
-      {(action === 'SUBREV' || action === 'ACCWREV'|| action === 'ACC') && manuscript.state === 'REV' && (
+      {(action === 'SUBREV') && manuscript.state === 'REV' && (
       <>
       <label htmlFor="report">Referee Report</label>
       <textarea

@@ -194,7 +194,7 @@ function Submission() {
     return (
         <>
     <div className="subguide-container">
-    <h2 className="guidelines-title">Submission Guidelines</h2>
+    <h2 className="guidelines-title">{subguideTitle}</h2>
     
     {isEditingGuide ? (
         <textarea
