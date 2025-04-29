@@ -105,3 +105,23 @@
   color: #fcfcfc;
 }
 
+.state-header button {
+  cursor: pointer;
+  background-color: hsla(45, 29%, 97%, 1);
+  color: hsla(132, 27%, 63%, 1);
+}
+
+.state-header button:hover {
+  background-color: hsla(132, 27%, 63%, 1);
+  color: hsla(45, 29%, 97%, 1)
+}
+
+.state-header button.toggled {
+  background-color: hsla(132, 27%, 63%, 1);
+  color: hsla(45, 29%, 97%, 1)
+}
+
+.state-header button.toggled:hover {
+  background-color: hsla(45, 29%, 97%, 1);
+  color: hsla(132, 27%, 63%, 1);
+}
