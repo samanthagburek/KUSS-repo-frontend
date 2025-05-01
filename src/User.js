@@ -1,17 +1,28 @@
 var User = (function() {
     var _id = "";
+    var fullName = "";
     //var roles = [];
   
-    var getName = function() {
+    var getEmail = function() {
       _id = getCookie("id");
       return _id;
     };
   
-    var setName = function(thisName) {
-      _id = thisName;     
-        document.cookie = "id="+thisName;
+    var setEmail = function(thisEmail) {
+      _id = thisEmail;     
+        document.cookie = "id="+thisEmail;
       // Also set this in cookie/localStorage
     };
+
+    var getName = function() {
+      fullName = getCookie("name");
+      return fullName;
+    }
+
+    var setName = function(thisName) {
+      fullName = thisName;
+      document.cookie = "name="+thisName;
+    }
 
     function getCookie(cname) {
       let name = cname + "=";
@@ -29,6 +40,8 @@ var User = (function() {
     }
   
     return {
+      getEmail: getEmail,
+      setEmail: setEmail,
       getName: getName,
       setName: setName
     }

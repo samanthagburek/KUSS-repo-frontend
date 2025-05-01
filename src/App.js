@@ -23,7 +23,7 @@ import User from './User'
 
 function AppRoutes() {
   const location = useLocation();
-  const isLoggedIn = User.getName() !== "";
+  const isLoggedIn = User.getEmail() !== "";
 
   // Only allow /login and /register if not logged in
   if (!isLoggedIn && location.pathname !== '/login' && location.pathname !== '/register') {

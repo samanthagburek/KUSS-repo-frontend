@@ -157,7 +157,7 @@ function Person({ person, fetchPeople, setError }) {
     const confirmDelete = window.confirm(`Are you sure you want to delete ${name}?`);
     if (!confirmDelete) return; 
     //const delperson = { data: {email}}
-    const curr_user = User.getName();
+    const curr_user = User.getEmail();
     var del_endpt = PEOPLE_READ_ENDPOINT + '/' + email + '/' + curr_user
    
     axios.delete(del_endpt)

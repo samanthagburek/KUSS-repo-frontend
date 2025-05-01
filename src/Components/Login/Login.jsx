@@ -26,7 +26,8 @@ function LoginForm({
         
             .then(({data}) => {
                 setAddsMsg(`${data["email"]} log in success!`);
-                User.setName(data["email"]);
+                User.setEmail(data["email"]);
+                User.setName(data["name"]);
                 setTimeout(() => {
                     setAddsMsg('');
                     navigate('/');
