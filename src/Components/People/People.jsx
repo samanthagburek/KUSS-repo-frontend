@@ -139,11 +139,15 @@ function Person({ person, fetchPeople, setError }) {
   const [delMsg, setdelMsg] = useState('');
   const [updating, setUpdating] = useState(false);
   const [roleOptions, setRoleOptions] = useState('');
+  const [currUserEmail, setUserEmail] = useState('');
+  const [currUserRoles, setUserRoles] = useState([]);
+
   
   const rolesByName = roles.map(role => roleOptions[role]);
   const rolesString = roles.length > 1 ? 
                       rolesByName.slice(0,-1).join(", ") + " and " + rolesByName[roles.length-1]
                       : rolesByName[0];
+
 
   const getRoles = () => {
     axios.get(ROLES_ENDPOINT)
@@ -152,6 +156,13 @@ function Person({ person, fetchPeople, setError }) {
   useEffect(getRoles, []);
 
    roles.join(', ');
+
+  useEffect(() => {
+    const userRoles = User.getRoles();
+    const userEmail = User.getEmail();
+    setUserEmail(userEmail);
+    setUserRoles(userRoles);
+  }, []);
 
   const deletePerson = () => {
     const confirmDelete = window.confirm(`Are you sure you want to delete ${name}?`);
@@ -206,8 +217,10 @@ function Person({ person, fetchPeople, setError }) {
           <p>Contact: <a href={`mailto:${email}`}>{email}</a></p>
           <br></br>
           <div className="grid-container">
-            <button onClick={() => setUpdating(true)}>Update</button>
-            <button className="delete-button" onClick={deletePerson}>Delete</button>
+            {currUserEmail == email && (<button onClick={() => setUpdating(true)}>Update</button>)}
+            {currUserRoles.some(item => ["ME", "CE", "ED"].includes(item)) && (
+              <button className="delete-button" onClick={deletePerson}>Delete</button>
+            )}
           </div>
         </div>
         

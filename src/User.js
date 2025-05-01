@@ -1,7 +1,7 @@
 var User = (function() {
     var _id = "";
     var fullName = "";
-    //var roles = [];
+    var roles = [];
   
     var getEmail = function() {
       _id = getCookie("id");
@@ -24,6 +24,16 @@ var User = (function() {
       document.cookie = "name="+thisName;
     }
 
+    var getRoles = function() {
+      roles = JSON.parse(getCookie("roles"));
+      return roles;
+    }
+
+    var setRoles = function(theRoles) {
+      roles = theRoles;
+      document.cookie = "roles="+(JSON.stringify(theRoles));
+    }
+
     function getCookie(cname) {
       let name = cname + "=";
       let ca = document.cookie.split(';');
@@ -43,7 +53,9 @@ var User = (function() {
       getEmail: getEmail,
       setEmail: setEmail,
       getName: getName,
-      setName: setName
+      setName: setName,
+      getRoles: getRoles,
+      setRoles: setRoles
     }
   
 })();

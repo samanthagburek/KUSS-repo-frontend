@@ -28,6 +28,7 @@ function LoginForm({
                 setAddsMsg(`${data["email"]} log in success!`);
                 User.setEmail(data["email"]);
                 User.setName(data["name"]);
+                User.setRoles(data["roles"]);
                 setTimeout(() => {
                     setAddsMsg('');
                     navigate('/');
