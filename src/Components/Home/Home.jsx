@@ -16,9 +16,13 @@ const Home = () => {
     const [error, setError] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
     const [username, setUsername] = useState('');
+    const [currUserEmail, setUserEmail] = useState('');
+    const [currUserRoles, setUserRoles] = useState([]);
 
  useEffect(() => {
         setUsername(User.getName());
+        setUserRoles(User.getRoles());
+        setUserEmail(User.getEmail());
         axios.get(TEXT_READ_ENDPOINT)
             .then(({ data }) => {
                 const aboutUsEntry = Object.values(data).find(text => text.key === "about_us");
@@ -40,7 +44,8 @@ const updateAboutUs = () => {
         title: aboutTitle,
         text: aboutText,
     };
-    axios.patch(TEXT_UPDATE_ENDPOINT, updatedText)
+    var update_endpt = TEXT_UPDATE_ENDPOINT + '/' + currUserEmail;
+    axios.patch(update_endpt, updatedText)
         .then(() => {
         setIsEditing(false);
         setSuccessMessage(`${aboutTitle} updated!`);
@@ -56,21 +61,26 @@ const updateAboutUs = () => {
 
         <section>
             {isEditing ? (
+                <div>
                 <textarea 
                     value={aboutText} 
                     onChange={handleChange} 
                     rows={4} 
                     style={{ width: '80%', padding: '10px', fontSize: '16px', lineHeight: '1.6' }}
                 />
+                {currUserRoles.some(item => ["ME", "CE", "ED"].includes(item)) && (
+                    <button onClick={isEditing ? updateAboutUs : () => setIsEditing(true)}>
+                        {isEditing ? 'Save' : 'Edit'}
+                    </button>)}
+                </div>
             ) : (
             <div className="about-container">
             <p>{username != "" ? "Hello, " + username : "!"}</p>
             <p> {aboutText}</p>
-            <button 
-                onClick={isEditing ? updateAboutUs : () => setIsEditing(true)} 
-                >
+            {currUserRoles.some(item => ["ME", "CE", "ED"].includes(item)) && (
+            <button onClick={isEditing ? updateAboutUs : () => setIsEditing(true)}>
                 {isEditing ? 'Save' : 'Edit'}
-            </button>
+            </button>)}
             </div>
             )}
             {error && <div style={{ color: 'red', marginTop: '10px' }}>{error}</div>}
