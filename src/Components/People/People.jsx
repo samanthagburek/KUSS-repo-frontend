@@ -217,7 +217,9 @@ function Person({ person, fetchPeople, setError }) {
           <p>Contact: <a href={`mailto:${email}`}>{email}</a></p>
           <br></br>
           <div className="grid-container">
-            {currUserEmail == email && (<button onClick={() => setUpdating(true)}>Update</button>)}
+          {(currUserEmail === email || currUserRoles.some(role => ["ME", "CE", "ED"].includes(role))) && (
+            <button onClick={() => setUpdating(true)}>Update</button>
+          )}
             {currUserRoles.some(item => ["ME", "CE", "ED"].includes(item)) && (
               <button className="delete-button" onClick={deletePerson}>Delete</button>
             )}

@@ -3,12 +3,13 @@ import propTypes from 'prop-types';
 import axios from 'axios';
 import { BACKEND_URL } from '../../constants';
 import './Dashboard.css';
+import User from '../../User';
+
+
 const MANUSCRIPTS_ENDPOINT = `${BACKEND_URL}/manuscripts`;
-// const MANUSCRIPTS_ACTIONS_ENDPOINT = `${BACKEND_URL}/manuscripts/actions`;
 const MANUSCRIPTS_RECEIVE_ACTION_ENDPOINT = `${BACKEND_URL}/manuscripts/receive_action`;
 const VALID_ACTIONS_BY_STATE_ENDPOINT = `${MANUSCRIPTS_ENDPOINT}/valid_actions`;
 const MANUSCRIPTS_STATES_ENDPOINT = `${BACKEND_URL}/manuscripts/states`;
-
 
 function ErrorMessage({ message }) {
     return (
@@ -29,6 +30,8 @@ function UpdateManuscriptForm({ visible, manuscript, cancel, fetchManus, setErro
   const [abstract, setAbstract] = useState(manuscript.abstract);
   const [editor_email, setEditorEmail] = useState(manuscript.editor_email);
   const [updateMessage, setUpdateMessage] = useState('');
+  const currUserRoles = User.getRoles();
+  const isEditor = currUserRoles.some(role => ['ME', 'CE', 'ED'].includes(role));
 
 useEffect(() => {
    if (manuscript) {
@@ -49,30 +52,30 @@ const changeText = (event) => { setText(event.target.value); };
 const changeAbstract = (event) => { setAbstract(event.target.value); };
 const changeEditorEmail = (event) => { setEditorEmail(event.target.value); };
 
-  const updateManuscript = (event) => {
-    event.preventDefault();
+const updateManuscript = (event) => {
+  event.preventDefault();
 
-    const updatedManuscript = {
-      _id : manuscript._id,
-      title: title,
-      author: author,
-      author_email: author_email,
-      text: text, 
-      abstract: abstract,
-      editor_email: editor_email,
-    };
-    
-    axios.patch(MANUSCRIPTS_ENDPOINT, updatedManuscript)
-      .then(() => {
-        setUpdateMessage(`"${title}" updated successfully!`);
-        setTimeout(() => {
-          setUpdateMessage('');
-          cancel();
-          fetchManus();
-        }, 2000);
-      })
-      .catch((error) => setError(`Error updating manuscript: ${error.message}`));
+  const updatedManuscript = {
+    _id : manuscript._id,
+    title: title,
+    author: author,
+    author_email: author_email,
+    text: text, 
+    abstract: abstract,
+    editor_email: editor_email,
   };
+  
+  axios.patch(MANUSCRIPTS_ENDPOINT, updatedManuscript)
+    .then(() => {
+      setUpdateMessage(`"${title}" updated successfully!`);
+      setTimeout(() => {
+        setUpdateMessage('');
+        cancel();
+        fetchManus();
+      }, 2000);
+    })
+    .catch((error) => setError(`Error updating manuscript: ${error.message}`));
+};
 if (!visible) return null;
  return (
       <div>
@@ -83,19 +86,22 @@ if (!visible) return null;
 
         <label htmlFor="author">Author</label>
         <input type="text" id="author" value={author} onChange={changeAuthor} />
-
+        {isEditor && (
+        <>
         <label htmlFor="author_email">Author Email</label>
-        <input type="email" id="author_email" value={author_email} onChange={changeAuthorEmail} />
-
+        <input type="email" id="author_email" value={author_email} onChange={changeAuthorEmail} readOnly={!isEditor} />
+        </>)}
         <label htmlFor="text">Text</label>
         <textarea id="text" value={text} onChange={changeText} />
 
         <label htmlFor="abstract">Abstract</label>
         <textarea id="abstract" value={abstract} onChange={changeAbstract}/>
 
+        {isEditor && (
+        <>
         <label htmlFor="editor_email">Editor Email</label>
         <input type="email" id="editor_email" value={editor_email} onChange={changeEditorEmail} />
-
+        </>)}
         
         <button type="button" onClick={cancel}>Cancel</button>
         <button type="submit" onClick={updateManuscript}>Update</button>
@@ -143,14 +149,6 @@ useEffect(() => {
     setTitle(manuscript.title);
     }
   }, [manuscript]);
-
-  // const getActions = () => {
-  //   axios.get(MANUSCRIPTS_ACTIONS_ENDPOINT)
-  //     .then(({ data }) => {setActionOptions(data)})
-  //     .catch((error) => { setError(`There was a problem getting roles. ${error}`); });
-  // }
-  // useEffect(getActions, []);
-
 const getActions = () => {
   if (!manuscript || !manuscript.state) return;
 
@@ -202,79 +200,82 @@ useEffect(() => {
       .catch((error) => setError(`Error updating "${manuscript._id}""${actionForm.curr_state}""${action}" manuscript: ${error.message}`));
   };
 if (!visible) return null;
- return (
-      <div>
-      {updateMessage && <div className="update-popup">{updateMessage}</div>}
-      <form className="dashboard-container">
-      <p>Select an action to send</p>
-        <select name='sendAction' onChange={changeAction}>
-           <option value="">Select an action</option>
-            {Object.entries(actionOptions).map(([code, label]) => (
-            <option key={code} value={code}>
+const isEditor = User.getRoles().some(role => ['ME', 'CE', 'ED'].includes(role)); 
+
+return (
+    <div>
+    {updateMessage && <div className="update-popup">{updateMessage}</div>}
+    <form className="dashboard-container">
+    <select name='sendAction' onChange={changeAction}>
+      <option value="">Select an action</option>
+      {Object.entries(actionOptions)
+        .filter(([code]) => isEditor || code !== 'EDMOV')
+        .map(([code, label]) => (
+          <option key={code} value={code}>
             {label}
-            </option>
-  ))}
-        </select> <br></br><br></br>
-        {(action === 'ARF')&& (
-        <div>
-        <label htmlFor="author">Enter Referee Email</label>
-        <input type="text" id="ref" value={ref} onChange={changeRef} />
-        </div>
-      )}
-
-{['DRF', 'SUBREV'].includes(action) && (
-  <div>
-    <label htmlFor="ref">Select Referee</label>
-    <select id="ref" value={ref} onChange={changeRef}>
-      <option value="">Select a referee</option>
-      {manuscript.referees && Object.keys(manuscript.referees).map((email) => (
-        <option key={email} value={email}>{email}</option>
-      ))}
+          </option>
+        ))}
     </select>
-  </div>
-)}
 
-        {action === 'EDMOV' && (
-          <>
-            <label htmlFor="newState">Select New State</label>
-            <select id="newState" value={newState} onChange={(e) => setNewState(e.target.value)}>
-              <option value="">Select a state</option>
-              {Object.entries(stateOptions)
-                .filter(([code]) => code != manuscript.state)
-                .map(([code, label]) => (
-                <option key={code} value={code}>{label}</option>
-              ))}
-            </select> <br></br><br></br>
-          </>
-        )}
-        
-      {(action === 'SUBREV') && manuscript.state === 'REV' && (
+    {(action === 'ARF')&& (
+    <div>
+    <label htmlFor="author">Enter Referee Email</label>
+    <input type="text" id="ref" value={ref} onChange={changeRef} />
+    </div>
+    )}
+
+    {['DRF', 'SUBREV'].includes(action) && (
+      <div>
+        <label htmlFor="ref">Select Referee</label>
+        <select id="ref" value={ref} onChange={changeRef}>
+          <option value="">Select a referee</option>
+          {manuscript.referees && Object.keys(manuscript.referees).map((email) => (
+            <option key={email} value={email}>{email}</option>
+          ))}
+        </select>
+      </div>
+    )}
+
+    {action === 'EDMOV' && (
       <>
-      <label htmlFor="report">Referee Report</label>
-      <textarea
-        id="report"
-        value={report}
-        onChange={(e) => setReport(e.target.value)}
-      />
+        <label htmlFor="newState">Select New State</label>
+        <select id="newState" value={newState} onChange={(e) => setNewState(e.target.value)}>
+          <option value="">Select a state</option>
+          {Object.entries(stateOptions)
+            .filter(([code]) => code != manuscript.state)
+            .map(([code, label]) => (
+            <option key={code} value={code}>{label}</option>
+          ))}
+        </select> <br></br><br></br>
+      </>
+    )}
+        
+    {(action === 'SUBREV') && manuscript.state === 'REV' && (
+    <>
+    <label htmlFor="report">Referee Report</label>
+    <textarea
+      id="report"
+      value={report}
+      onChange={(e) => setReport(e.target.value)}
+    />
 
-      <label htmlFor="verdict">Referee Verdict</label>
-      <select
-        id="verdict"
-        value={verdict}
-        onChange={(e) => setVerdict(e.target.value)}
-      >
-      <option value="">Select a verdict</option>
-      {Object.entries(verdictOptions).map(([code, label]) => (
-        <option key={code} value={code}>{label}</option>
-      ))}
+    <label htmlFor="verdict">Referee Verdict</label>
+    <select
+      id="verdict"
+      value={verdict}
+      onChange={(e) => setVerdict(e.target.value)}
+    >
+    <option value="">Select a verdict</option>
+    {Object.entries(verdictOptions).map(([code, label]) => (
+      <option key={code} value={code}>{label}</option>
+    ))}
     </select>
   </>
 )}
-{/* />
-)} */}
-        <button type="button" onClick={cancel}>Cancel</button>
-        <button type="submit" onClick={updateManuscript}>Update</button>
-      </form>
+
+    <button type="button" onClick={cancel}>Cancel</button>
+    <button type="submit" onClick={updateManuscript}>Update</button>
+    </form>
     </div>
  );
 }
@@ -351,6 +352,9 @@ function Dashboard() {
   const [stateLabels, setStateLabels] = useState({});
   const [orderedStates, setOrderedStates] = useState([]);
   const [collapsedStates, setCollapsedStates] = useState({});
+  const [currUserEmail, setUserEmail] = useState('');
+  const [currUserRoles, setUserRoles] = useState([]);
+
 
 
   useEffect(() => {
@@ -369,6 +373,8 @@ function Dashboard() {
 
 
   useEffect(() => {
+    setUserRoles(User.getRoles());
+    setUserEmail(User.getEmail());
     axios.get(`${MANUSCRIPTS_STATES_ENDPOINT}`)
       .then(({ data }) => {
         setStateLabels(data);
@@ -421,9 +427,17 @@ return (
      {error && <ErrorMessage message={error} />}
      
      {orderedStates.map((stateCode) => {
-        const stateManuscripts = manuscripts.filter(
-          (m) => m.state === stateCode && !['WIT', 'REJ', 'PUB'].includes(m.state)
-        );
+        const isEditor = currUserRoles.some(role => ['ME', 'CE', 'ED'].includes(role));
+        const stateManuscripts = manuscripts.filter((m) => {
+        const isAuthor = m.author_email === currUserEmail;
+        const isReferee = m.referees && Object.keys(m.referees).some(email => email === currUserEmail);
+        const isVisibleState = !['WIT', 'REJ', 'PUB'].includes(m.state);
+
+        if (!isVisibleState || m.state !== stateCode) return false;
+
+        return isEditor || isAuthor || isReferee;
+      });
+
 
         if (stateManuscripts.length === 0) return null;
 
@@ -464,10 +478,31 @@ return (
                   ) : (
                     <>
                       <DisplayManuscriptDetails manuscript={manuscript} stateLabels={stateLabels} />
+                      {currUserRoles.some(role => ['ME', 'CE', 'ED'].includes(role)) && (
+                        <>
+                          <button onClick={() => setUpdatingManus(manuscript)}>Update</button>
+                          <button onClick={() => setSendingAction(manuscript)}>Send Action</button>
+                          <button onClick={() => deleteManus(manuscript._id, manuscript.title)}>Delete</button>
+                        </>
+                      )}
+
+                      {manuscript.author_email === currUserEmail &&
+                      ['AUREVIEW', 'AUREVISION'].includes(manuscript.state) &&
+                      !currUserRoles.some(role => ['ME', 'CE', 'ED'].includes(role)) && (
+                        <>
+                          <button onClick={() => setUpdatingManus(manuscript)}>Update</button>
+                          <button onClick={() => setSendingAction(manuscript)}>Send Action</button>
+                        </>
+                      )}
+                    
+                   {manuscript.referees && Object.keys(manuscript.referees).includes(currUserEmail) &&
+                   manuscript.state === 'REV' && (
+                    <>
                       <button onClick={() => setUpdatingManus(manuscript)}>Update</button>
                       <button onClick={() => setSendingAction(manuscript)}>Send Action</button>
-                      <button onClick={() => deleteManus(manuscript._id, manuscript.title)}>Delete</button>
                     </>
+                  )}
+                   </>
                   )}
                 </div>
               );
