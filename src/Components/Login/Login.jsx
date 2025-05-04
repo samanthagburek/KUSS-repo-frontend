@@ -21,6 +21,11 @@ function LoginForm({
 
     const tryLogin = (event) => {
         event.preventDefault();
+        if (!email.trim() || !password.trim()) {
+            setError("Email and password are required.");
+            return;
+        }
+
         var endpoint = PEOPLE_ENDPOINT + "/" + email + "/" + password
         axios.get(endpoint)
         
@@ -29,6 +34,7 @@ function LoginForm({
                 User.setEmail(data["email"]);
                 User.setName(data["name"]);
                 User.setRoles(data["roles"]);
+                User.setAffiliation(data["affiliation"]);
                 setTimeout(() => {
                     setAddsMsg('');
                     navigate('/');
@@ -50,7 +56,7 @@ function LoginForm({
                 <label htmlFor="password">
                     Password
                 </label>
-                <input required type="text" id="password" onChange={changePassword} />
+                <input required type="password" id="password" onChange={changePassword} />
 
                 <button type="button" onClick={tryLogin}>Log In</button>
                 <button type="button" onClick={() => navigate('/register')}>Register</button>
@@ -101,8 +107,6 @@ function Submission() {
     </>
     );
 }
-
-
 
 
 export default Submission;

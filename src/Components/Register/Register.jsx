@@ -89,7 +89,8 @@ function AddPersonForm({
                 <label htmlFor="password">
                     Password
                 </label>
-                <input required type="text" id="password" onChange={changePassword} />
+                <input required type="password" id="password" value={password} onChange={changePassword} />
+
                 <label htmlFor="affiliation">
                     Affiliation
                 </label>

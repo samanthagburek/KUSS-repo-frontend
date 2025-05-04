@@ -8,8 +8,7 @@ const PAGES = [
   { label: 'People', destination: '/people' },
   { label: 'Submission', destination: '/submission'},
   { label: 'Dashboard', destination: '/dashboard' },
-  //{ label: 'Texts', destination: '/text'},
-
+  { label: 'Profile', destination: '/profile'},
 ];
 
 function NavLink({ page }) {

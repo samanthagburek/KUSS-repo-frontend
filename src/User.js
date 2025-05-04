@@ -33,6 +33,20 @@ var User = (function() {
       roles = theRoles;
       document.cookie = "roles="+(JSON.stringify(theRoles));
     }
+    var getAffiliation = function() {
+      return getCookie("affiliation");
+    };
+
+    var setAffiliation = function(aff) {
+      document.cookie = "affiliation=" + aff;
+    }
+
+    var clear = function() {
+      document.cookie = "id=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+      document.cookie = "name=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+      document.cookie = "roles=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+      document.cookie = "affiliation=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    }
 
     function getCookie(cname) {
       let name = cname + "=";
@@ -55,7 +69,10 @@ var User = (function() {
       getName: getName,
       setName: setName,
       getRoles: getRoles,
-      setRoles: setRoles
+      setRoles: setRoles,
+      getAffiliation: getAffiliation,
+      setAffiliation: setAffiliation,
+      clear: clear
     }
   
 })();

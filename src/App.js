@@ -3,7 +3,6 @@ import {
   BrowserRouter,
   Routes,
   Route,
-  // useParams,
   useLocation,
   Navigate,
 } from 'react-router-dom';
@@ -12,7 +11,6 @@ import './App.css';
 
 import Navbar from './Components/Navbar';
 import People from './Components/People';
-//import Text from './Components/Text';
 import Masthead from './Components/Masthead';
 import Submission from './Components/Submission';
 import Login from './Components/Login';
@@ -20,6 +18,7 @@ import Register from './Components/Register';
 import Home from './Components/Home';
 import Dashboard from './Components/Dashboard';
 import User from './User'
+import Profile from './Components/Profile';
 
 function AppRoutes() {
   const location = useLocation();
@@ -41,6 +40,7 @@ function AppRoutes() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/profile" element={<Profile />} />
       </Routes>
     </>
   );

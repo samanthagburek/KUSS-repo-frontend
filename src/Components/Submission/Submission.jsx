@@ -5,7 +5,7 @@ import { BACKEND_URL } from '../../constants';
 import './Submission.css';
 const MANUSCRIPTS_ENDPOINT = `${BACKEND_URL}/manuscripts`;
 const TEXT_READ_ENDPOINT = `${BACKEND_URL}/text`;
-
+import User from '../../User';
 
 function AddManuscript({ visible, cancel, fetchManus, setError, hasReadGuidelines, setHasReadGuidelines }) {
     const [title, setTitle] = useState('');
@@ -13,17 +13,14 @@ function AddManuscript({ visible, cancel, fetchManus, setError, hasReadGuideline
     const [author_email, setAuthorEmail] = useState('');
     const [text, setText] = useState('');
     const [abstract, setAbstract] = useState('');
-    // const [editor_email, setEditorEmail] = useState('');
     const [addMsg, setAddMsg] = useState(false);
     const [errors, setErrors] = useState([]);
-
 
     const changeTitle = (event) => setTitle(event.target.value);
     const changeAuthor = (event) => setAuthor(event.target.value);
     const changeAuthorEmail = (event) => setAuthorEmail(event.target.value);
     const changeText = (event) => setText(event.target.value);
     const changeAbstract = (event) => setAbstract(event.target.value);
-    // const changeEditorEmail = (event) => setEditorEmail(event.target.value);
 
     const validateForm = () => {
     const newErrors = [];
@@ -32,7 +29,6 @@ function AddManuscript({ visible, cancel, fetchManus, setError, hasReadGuideline
     if (!author_email.trim()) newErrors.push('Author Email is required.');
     if (!text.trim()) newErrors.push('Text is required.');
     if (!abstract.trim()) newErrors.push('Abstract is required.');
-    // if (!editor_email.trim()) newErrors.push('Editor Email is required.');
     if (!hasReadGuidelines) newErrors.push('You must agree to the submission guidelines before submitting.');
 
     setErrors(newErrors);
@@ -146,6 +142,8 @@ function Submission() {
     const [hasReadGuidelines, setHasReadGuidelines] = useState(false);
     const [isEditingGuide, setIsEditingGuide] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
+    const [currUserEmail, setUserEmail] = useState('');
+    const [currUserRoles, setUserRoles] = useState([]);
 
     useEffect(() => {
         if (error) {
@@ -154,7 +152,9 @@ function Submission() {
         }
     }, [error])
 
-     useEffect(() => {
+    useEffect(() => {
+        setUserRoles(User.getRoles());
+        setUserEmail(User.getEmail());
         axios.get(TEXT_READ_ENDPOINT)
             .then(({ data }) => {
                 const subguide = Object.values(data).find(text => text.key === "submission_guidelines");
@@ -165,7 +165,6 @@ function Submission() {
             })
             .catch(error => setError(`Error fetching submission guidelines: ${error}`));
     }, []);
-
 
     const fetchManus = () => {
         axios.get(MANUSCRIPTS_ENDPOINT)
@@ -180,7 +179,8 @@ function Submission() {
         text: subguideText,
     };
 
-    axios.patch(TEXT_READ_ENDPOINT, updatedText)
+    var update_endpt = TEXT_READ_ENDPOINT + '/' + currUserEmail;
+     axios.patch(update_endpt, updatedText)
         .then(() => {
             setIsEditingGuide(false);
             setSuccessMessage(`${subguideTitle} updated!`);
@@ -207,9 +207,12 @@ function Submission() {
         <p>{subguideText}</p>
     )}
 
+    {currUserRoles.some(role => ['ME', 'CE', 'ED'].includes(role)) && (
     <button onClick={isEditingGuide ? updateSubmissionGuidelines : () => setIsEditingGuide(true)}>
         {isEditingGuide ? 'Save' : 'Edit'}
     </button>
+)}
+
 </div>
 
     {error && <div style={{ color: 'red', marginTop: '10px' }}>{error}</div>}
