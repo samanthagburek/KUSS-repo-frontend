@@ -6,7 +6,17 @@ import axios from 'axios';
 
 jest.mock('axios');
 
+jest.mock('../../User', () => ({
+  getRoles: jest.fn(),
+  getEmail: jest.fn(),
+}));
+
 describe('Dashboard', () => {
+  beforeEach(() => {
+    require('../../User').getRoles.mockReturnValue(['ED']);
+    require('../../User').getEmail.mockReturnValue('editor@mock.com');
+  });
+
     it('renders the dashboard page', async () => {
         const mockStates = {
           data: {

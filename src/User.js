@@ -25,7 +25,7 @@ var User = (function() {
     }
 
     var getRoles = function() {
-      roles = JSON.parse(getCookie("roles"));
+      //roles = JSON.parse(getCookie("roles"));
       return roles;
     }
 

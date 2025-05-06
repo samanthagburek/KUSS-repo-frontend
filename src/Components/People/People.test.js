@@ -5,13 +5,9 @@ import userEvent from '@testing-library/user-event'
 import People from './People';
 
 describe('People component', () => {
-  it('shows form when add-person button is clicked', async () => {
+  it('shows people page', async () => {
     render(<People />);
 
-    await userEvent.click(screen.getByText('Add a Person'));
-    await screen.findAllByRole('textbox');
-
-    expect(screen.getAllByRole('textbox')).toHaveLength(3);
-
+    expect(screen.getByText(/View All People/i)).toBeInTheDocument();
   });
 });

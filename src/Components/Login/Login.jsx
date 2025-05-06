@@ -30,11 +30,12 @@ function LoginForm({
         axios.get(endpoint)
         
             .then(({data}) => {
-                setAddsMsg(`${data["email"]} log in success!`);
-                User.setEmail(data["email"]);
-                User.setName(data["name"]);
-                User.setRoles(data["roles"]);
-                User.setAffiliation(data["affiliation"]);
+                const userData = data.user;
+                setAddsMsg(`${userData.email} log in success!`);
+                User.setEmail(userData.email);
+                User.setName(userData.name);
+                User.setRoles(userData.roles);
+                User.setAffiliation(userData.affiliation);
                 setTimeout(() => {
                     setAddsMsg('');
                     navigate('/');
