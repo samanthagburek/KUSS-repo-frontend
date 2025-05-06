@@ -7,6 +7,7 @@
     "axios": "^1.6.6",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-router-dom": "^6.29.0",
     "react-scripts": "5.0.1",
     "web-vitals": "^2.1.4"
   },
@@ -42,7 +43,6 @@
     "babel-jest": "^29.7.0",
     "eslint": "^8.56.0",
     "eslint-plugin-react": "^7.33.2",
-    "jest": "^27.5.1",
-    "react-router-dom": "^6.29.0"
+    "jest": "^27.5.1"
   }
 }
