@@ -145,6 +145,7 @@ function Submission() {
     const [currUserEmail, setUserEmail] = useState('');
     const [currUserRoles, setUserRoles] = useState([]);
 
+    
     useEffect(() => {
         if (error) {
         const timer = setTimeout(() => setError(''), 10000);

@@ -1,10 +1,10 @@
 import React, { useEffect,useState } from 'react';
 import propTypes from 'prop-types';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { BACKEND_URL } from '../../constants';
 import './Register.css';
 const TEXT_READ_ENDPOINT = `${BACKEND_URL}/text`;
-import { useNavigate } from 'react-router-dom';
 
 
 
@@ -75,7 +75,7 @@ function AddPersonForm({
 
     if (!visible) return null;
     return (
-        <div>
+        <div className="checkbox-wrapper">
             {addMsg && <div className="add-popup">{addMsg}</div>}
             <form>
                 <label htmlFor="name">
@@ -139,9 +139,9 @@ function Submission() {
     const [tosText, settosText] = useState('');
     const [tosTitle, settosTitle] =  useState('');
     const [hasReadGuidelines, setHasReadGuidelines] = useState(false);
-    const [isEditingGuide, setIsEditingGuide] = useState(false);
-    const [successMessage, setSuccessMessage] = useState('');
 
+    const navigate = useNavigate();
+    
     useEffect(() => {
         if (error) {
         const timer = setTimeout(() => setError(''), 10000);
@@ -161,51 +161,15 @@ function Submission() {
             .catch(error => setError(`Error fetching submission guidelines: ${error}`));
     }, []);
 
-
-    const updateSubmissionGuidelines = () => {
-    const updatedText = {
-        key: "terms_of_service",
-        title: tosTitle,
-        text: tosText,
-    };
-
-    axios.patch(TEXT_READ_ENDPOINT, updatedText)
-        .then(() => {
-            setIsEditingGuide(false);
-            setSuccessMessage(`${tosTitle} updated!`);
-            setTimeout(() => setSuccessMessage(''), 3000);
-        })
-        .catch(error => setError(`Error updating submission guidelines: ${error.message}`));
-}
-
-
+    
     return (
         <>
     <div className="tos-container">
     <h2 className="guidelines-title">{tosTitle}</h2>
     
-    {isEditingGuide ? (
-        <textarea
-            value={tosText}
-            onChange={(e) => settosText(e.target.value)}
-            rows={6}
-            style={{ width: '100%', padding: '10px', fontSize: '16px', marginBottom: '10px' }}
-        />
-    ) : (
-        <p>{tosText}</p>
-    )}
-
-    <button onClick={isEditingGuide ? updateSubmissionGuidelines : () => setIsEditingGuide(true)}>
-        {isEditingGuide ? 'Save' : 'Edit'}
-    </button>
+    <p>{tosText}</p>
+    
 </div>
-
-    {error && <div style={{ color: 'red', marginTop: '10px' }}>{error}</div>}
-    {successMessage && (
-    <div className="popup-message">
-        {successMessage}
-    </div>
-)}
     <div className="checkbox-wrapper">
         <input
             type="checkbox"
@@ -216,13 +180,13 @@ function Submission() {
         <label htmlFor="guidelinesCheck">I have read and agree to the user TOS</label>
         </div>
     <div className="wrapper">
-
+        
         {!addingManus ? (
             <button onClick={() => setAddingManus(true)}>Create an Account</button>
         ) : (
             <h2 className="submit-manuscript-heading">Create an Account</h2>
         )}
-
+        <button type="button" onClick={() => navigate('/login')}>Login Existing Account</button>
         
         <AddPersonForm
             visible={addingManus}
