@@ -321,10 +321,10 @@ function DisplayManuscriptDetails({ manuscript, stateLabels }) {
     Object.entries(manuscript.referees).map(([email, data]) => (
       <div key={email} style={{ marginBottom: '1rem', paddingLeft: '1rem' }}>
         <p><a href={`mailto:${email}`}>{email}</a></p>
-        {data.referee_report && (
+        {data.referee_report && data.referee_report !== "string" && (
           <p><strong>Report:</strong> {data.referee_report}</p>
         )}
-        {data.referee_verdict && (
+        {data.referee_verdict && data.referee_verdict !== "string" && (
           <p><strong>Verdict:</strong> {data.referee_verdict}</p>
         )}
       </div>
