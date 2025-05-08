@@ -495,7 +495,7 @@ return (
                   ) : (
                     <>
                       <DisplayManuscriptDetails manuscript={manuscript} stateLabels={stateLabels} />
-                      {currUserRoles.some(role => ['ME', 'CE', 'ED'].includes(role)) && (
+                      {currUserRoles.some(role => ['ME', 'CE', 'ED'].includes(role)) && manuscript.author_email !== currUserEmail && (
                         <>
                           <button onClick={() => setUpdatingManus(manuscript)}>Update</button>
                           <button onClick={() => setSendingAction(manuscript)}>Send Action</button>
@@ -509,15 +509,24 @@ return (
                         <>
                           <button onClick={() => setUpdatingManus(manuscript)}>Update</button>
                           <button onClick={() => setSendingAction(manuscript)}>Send Action</button>
+                          <button onClick={() => doWithdraw(manuscript._id, manuscript.title)}>Withdraw</button>
                         </>
                       )}
 
-                      { manuscript.author_email === currUserEmail && (
+                      { manuscript.author_email === currUserEmail && !currUserRoles.some(role => ['ME', 'CE', 'ED'].includes(role)) && (
                         <>
                           <button onClick={() => setUpdatingManus(manuscript)}>Update</button>
                           <button onClick={() => doWithdraw(manuscript._id, manuscript.title)}>Withdraw</button>
-                          <button onClick={() => deleteManus(manuscript._id, manuscript.title)}>Delete</button>
 
+                        </>
+                      )}
+
+                      {manuscript.author_email === currUserEmail && currUserRoles.some(role => ['ME', 'CE', 'ED'].includes(role)) && (
+                        <>
+                          <button onClick={() => setUpdatingManus(manuscript)}>Update</button>
+                          <button onClick={() => setSendingAction(manuscript)}>Send Action</button>
+                          <button onClick={() => doWithdraw(manuscript._id, manuscript.title)}>Withdraw</button>
+                          <button onClick={() => deleteManus(manuscript._id, manuscript.title)}>Delete</button>
                         </>
                       )}
                     
