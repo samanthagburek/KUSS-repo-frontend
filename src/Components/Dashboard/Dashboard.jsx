@@ -8,6 +8,7 @@ import User from '../../User';
 
 const MANUSCRIPTS_ENDPOINT = `${BACKEND_URL}/manuscripts`;
 const MANUSCRIPTS_RECEIVE_ACTION_ENDPOINT = `${BACKEND_URL}/manuscripts/receive_action`;
+const MANUSCRIPTS_WITHDRAW_ENDPOINT = `${BACKEND_URL}/manuscripts/receive_withdraw`;
 const VALID_ACTIONS_BY_STATE_ENDPOINT = `${MANUSCRIPTS_ENDPOINT}/valid_actions`;
 const MANUSCRIPTS_STATES_ENDPOINT = `${BACKEND_URL}/manuscripts/states`;
 
@@ -404,6 +405,22 @@ const deleteManus = (_id, title) => {
       .catch((error) => setError(`Error deleting manuscript: ${error.message}`));
   };
 
+const doWithdraw = (_id, title) => {
+    const confirmDelete = window.confirm(`Are you sure you want to withdraw "${title}"?`);
+    if (!confirmDelete) return;
+
+    const withdrawManu = {
+      _id : _id
+    };
+
+    axios.put(MANUSCRIPTS_WITHDRAW_ENDPOINT, withdrawManu)
+      .then(() => {
+        setDeleteMessage(`Manuscript "${_id}" withdrawn successfully.`);
+        fetchManus();
+      })
+      .catch((error) => setError(`Error deleting manuscript: ${error.message}`));
+  };
+
 useEffect(fetchManus, []);
 
 const toggleCollapse = (stateCode) => {
@@ -492,6 +509,15 @@ return (
                         <>
                           <button onClick={() => setUpdatingManus(manuscript)}>Update</button>
                           <button onClick={() => setSendingAction(manuscript)}>Send Action</button>
+                        </>
+                      )}
+
+                      { manuscript.author_email === currUserEmail && (
+                        <>
+                          <button onClick={() => setUpdatingManus(manuscript)}>Update</button>
+                          <button onClick={() => doWithdraw(manuscript._id, manuscript.title)}>Withdraw</button>
+                          <button onClick={() => deleteManus(manuscript._id, manuscript.title)}>Delete</button>
+
                         </>
                       )}
                     
