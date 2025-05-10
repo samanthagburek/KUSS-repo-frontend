@@ -415,7 +415,7 @@ const doWithdraw = (_id, title) => {
 
     axios.put(MANUSCRIPTS_WITHDRAW_ENDPOINT, withdrawManu)
       .then(() => {
-        setDeleteMessage(`Manuscript "${_id}" withdrawn successfully.`);
+        setDeleteMessage(`Manuscript "${title}" withdrawn successfully.`);
         fetchManus();
       })
       .catch((error) => setError(`Error deleting manuscript: ${error.message}`));
@@ -495,13 +495,6 @@ return (
                   ) : (
                     <>
                       <DisplayManuscriptDetails manuscript={manuscript} stateLabels={stateLabels} />
-                      {currUserRoles.some(role => ['ME', 'CE', 'ED'].includes(role)) && manuscript.author_email !== currUserEmail && (
-                        <>
-                          <button onClick={() => setUpdatingManus(manuscript)}>Update</button>
-                          <button onClick={() => setSendingAction(manuscript)}>Send Action</button>
-                          <button onClick={() => deleteManus(manuscript._id, manuscript.title)}>Delete</button>
-                        </>
-                      )}
 
                       {manuscript.author_email === currUserEmail &&
                       ['AUREVIEW', 'AUREVISION'].includes(manuscript.state) &&
@@ -513,7 +506,7 @@ return (
                         </>
                       )}
 
-                      { manuscript.author_email === currUserEmail && !currUserRoles.some(role => ['ME', 'CE', 'ED'].includes(role)) && (
+                      { manuscript.author_email === currUserEmail && !['AUREVIEW', 'AUREVISION'].includes(manuscript.state) && (
                         <>
                           <button onClick={() => setUpdatingManus(manuscript)}>Update</button>
                           <button onClick={() => doWithdraw(manuscript._id, manuscript.title)}>Withdraw</button>
@@ -521,11 +514,10 @@ return (
                         </>
                       )}
 
-                      {manuscript.author_email === currUserEmail && currUserRoles.some(role => ['ME', 'CE', 'ED'].includes(role)) && (
+                      {manuscript.editor_email === currUserEmail && currUserRoles.some(role => ['ME', 'CE', 'ED'].includes(role)) && (
                         <>
                           <button onClick={() => setUpdatingManus(manuscript)}>Update</button>
                           <button onClick={() => setSendingAction(manuscript)}>Send Action</button>
-                          <button onClick={() => doWithdraw(manuscript._id, manuscript.title)}>Withdraw</button>
                           <button onClick={() => deleteManus(manuscript._id, manuscript.title)}>Delete</button>
                         </>
                       )}
