@@ -126,7 +126,7 @@ UpdateManuscriptForm.propTypes = {
   setError: propTypes.func.isRequired,
 };
 
-function SendActionForm({ visible, manuscript, cancel, fetchManus, setError }) {
+function SendActionForm({ visible, manuscript, cancel, fetchManus, setError, currUserEmail }) {
   const [title, setTitle] = useState(manuscript.title);
   const [updateMessage, setUpdateMessage] = useState('');
 
@@ -155,7 +155,13 @@ const getActions = () => {
 
   axios.post(VALID_ACTIONS_BY_STATE_ENDPOINT, { state: manuscript.state })
     .then(({ data }) => {
-      setActionOptions(data.actions);
+      let actionData = data.actions;
+      if (manuscript.referees && Object.keys(manuscript.referees).includes(currUserEmail) && manuscript.state === 'REV') {
+        actionData = Object.fromEntries(
+          Object.entries(actionData).filter(([code]) => code === 'SUBREV')
+        );
+      }
+      setActionOptions(actionData);
     })
     .catch((error) => {
       setError(`There was a problem getting actions for state ${manuscript.state}. ${error.message}`);
@@ -297,7 +303,7 @@ SendActionForm.propTypes = {
     referee_verdict: propTypes.string,
   })
 ),}).isRequired,
-
+  currUserEmail: propTypes.string.isRequired,
   cancel: propTypes.func.isRequired,
   fetchManus: propTypes.func.isRequired,
   setError: propTypes.func.isRequired,
@@ -449,6 +455,7 @@ return (
         const isAuthor = m.author_email === currUserEmail;
         const isReferee = m.referees && Object.keys(m.referees).some(email => email === currUserEmail);
         const isVisibleState = !['WIT', 'REJ', 'PUB'].includes(m.state);
+        //const isEditor = currUserRoles.some(role => ['ME', 'CE', 'ED'].includes(role));
 
         if (!isVisibleState || m.state !== stateCode) return false;
 
@@ -490,6 +497,7 @@ return (
                         cancel={() => setSendingAction(null)}
                         fetchManus={fetchManus}
                         setError={setError}
+                        currUserEmail={currUserEmail}
                       />
                     </>
                   ) : (
@@ -525,7 +533,6 @@ return (
                    {manuscript.referees && Object.keys(manuscript.referees).includes(currUserEmail) &&
                    manuscript.state === 'REV' && (
                     <>
-                      <button onClick={() => setUpdatingManus(manuscript)}>Update</button>
                       <button onClick={() => setSendingAction(manuscript)}>Send Action</button>
                     </>
                   )}
